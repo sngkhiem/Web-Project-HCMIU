@@ -98,6 +98,12 @@ port `3307`.
 From the project root, run:
 
 ``` {.bash language="bash"}
+cd be
+mvn clean package
+```
+Then 
+``` {.bash language="bash"}
+cd ..
 docker-compose up --build
 ```
 
