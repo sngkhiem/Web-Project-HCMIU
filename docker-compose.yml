@@ -1,0 +1,36 @@
+version: '3.8'
+services:
+  backend:
+    build: ./be
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+    environment:
+      # Example configuration (adjust according to your backend framework)
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/your_database?useSSL=false&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: cvip
+      SPRING_DATASOURCE_PASSWORD: cvip
+
+  frontend:
+    build: ./fe
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+  mysql:
+    image: mysql:8.0
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: cvip     # Change to a secure password
+      MYSQL_DATABASE: db              # Database name created on startup
+      MYSQL_USER: cvip                      # Non-root user for your app
+      MYSQL_PASSWORD: cvip              # Password for the non-root user
+    volumes:
+      - mysql_data:/var/lib/mysql
+        - ./initdb:/docker-entrypoint-initdb.d  # Optional: for initialization scripts
+    restart: unless-stopped
+volumes:
+  mysql_data:
