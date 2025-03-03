@@ -1,36 +1,39 @@
-version: '3.8'
 services:
-  backend:
-    build: ./be
-    ports:
-      - "8080:8080"
-    depends_on:
-      - mysql
-    environment:
-      # Example configuration (adjust according to your backend framework)
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/your_database?useSSL=false&serverTimezone=UTC
-      SPRING_DATASOURCE_USERNAME: cvip
-      SPRING_DATASOURCE_PASSWORD: cvip
-
   frontend:
     build: ./fe
+    volumes:
+      - ./fe:/app
+      - /app/node_modules  # Prevents overwriting container’s node_modules with an empty host folder
     ports:
-      - "80:80"
+      - "5173:5173"
+    command: npm run dev
+
+  backend:
+    build: ./be
+    volumes:
+      - ./be:/app
+    ports:
+      - "8080:8080"
+    command: mvn spring-boot:run
+    environment:
+      # Optional: triggers Spring Boot DevTools restart if using this feature
+      SPRING_DEVTOOLS_RESTART_TRIGGER_FILE: .restart
     depends_on:
-      - backend
+      - mysql
 
   mysql:
     image: mysql:8.0
     ports:
       - "3307:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: cvip     # Change to a secure password
-      MYSQL_DATABASE: db              # Database name created on startup
-      MYSQL_USER: cvip                      # Non-root user for your app
-      MYSQL_PASSWORD: cvip              # Password for the non-root user
+      MYSQL_ROOT_PASSWORD: cvip
+      MYSQL_DATABASE: db
+      MYSQL_USER: cvip
+      MYSQL_PASSWORD: cvip
     volumes:
       - mysql_data:/var/lib/mysql
-        - ./initdb:/docker-entrypoint-initdb.d  # Optional: for initialization scripts
+      - ./initdb:/docker-entrypoint-initdb.d
     restart: unless-stopped
+
 volumes:
   mysql_data:

@@ -1,17 +1,15 @@
-FROM node:18-alpine AS build
+FROM node:18-alpine
 WORKDIR /app
-# Copy package files first to leverage caching
-COPY package.json package-lock.json ./
-RUN npm ci
-# Copy all source files
-COPY . .
-# Run the build command; this should generate the 'dist' folder
-RUN npm run build
-# Optional debug: list contents to verify the output folder exists
-RUN ls -la /app
 
-FROM nginx:alpine
-# Copy the generated 'dist' folder from the build stage into Nginx
-COPY --from=build /app/dist /usr/share/nginx/html
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+# Copy package files and install dependencies
+COPY package.json package-lock.json ./
+RUN npm install
+
+# Copy source code (bind-mounted in docker-compose for auto-reload)
+COPY . .
+
+# Expose Vite's port (default is 3000)
+EXPOSE 3000
+
+# Start Vite development server (supports HMR)
+CMD ["npm", "run", "dev"]
