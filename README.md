@@ -92,7 +92,7 @@ persists data using a Docker volume.
 
   
 
-## Example `docker-compose.yml` {#example-docker-compose.yml .unnumbered}
+## Example `docker-compose.yml`
 
   
 
