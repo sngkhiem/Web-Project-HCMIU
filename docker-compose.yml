@@ -8,19 +8,6 @@ services:
       - "5173:5173"
     command: npm run dev
 
-  backend:
-    build: ./be
-    volumes:
-      - ./be:/app
-    ports:
-      - "8080:8080"
-    command: mvn spring-boot:run
-    environment:
-      # Optional: triggers Spring Boot DevTools restart if using this feature
-      SPRING_DEVTOOLS_RESTART_TRIGGER_FILE: .restart
-    depends_on:
-      - mysql
-
   mysql:
     image: mysql:8.0
     ports:

@@ -3,7 +3,7 @@ package com.example.hcmiuweb.entities;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 
-@Table(name = "Test")
+@Table(name = "Test2")
 @Entity
 public class Test {
     @Id
