@@ -1,4 +1,4 @@
-package com.hcmiuweb.entities;
+package com.example.hcmiuweb.entities;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
