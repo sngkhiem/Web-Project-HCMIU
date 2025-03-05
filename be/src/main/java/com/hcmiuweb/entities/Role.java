@@ -1,8 +1,6 @@
 package com.hcmiuweb.entities;
 
 import jakarta.persistence.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.Table;
 import java.time.LocalDate;
 
 @Table(name = "Role")
