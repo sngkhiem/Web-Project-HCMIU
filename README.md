@@ -51,7 +51,6 @@ Web-Project-HCMIU/
 
     Web-Project-HCMIU/
     ├── be/                      # Backend (Spring Boot) project
-    │   ├── Dockerfile           # Dockerfile for the backend
     │   └── target/*.jar         # Compiled JAR file
     ├── fe/                      # Frontend (Vite/React) project
     │   ├── Dockerfile           # Dockerfile for the frontend (using Nginx)
@@ -67,13 +66,6 @@ Web-Project-HCMIU/
   
 
 The `docker-compose.yml` file defines three services:
-
-  
-
--  **backend:** Builds the Spring Boot application from the `be`
-
-directory, exposes port 8080, and depends on the MySQL service.
-
   
 
 -  **frontend:** Builds the Vite/React application from the `fe`
@@ -108,18 +100,6 @@ services:
       - "5173:5173"
     command: npm run dev
 
-  backend:
-    build: ./be
-    volumes:
-      - ./be:/app
-    ports:
-      - "8080:8080"
-    command: mvn spring-boot:run
-    environment:
-      # Optional: triggers Spring Boot DevTools restart if using this feature
-      SPRING_DEVTOOLS_RESTART_TRIGGER_FILE: .restart
-    depends_on:
-      - mysql
 
   mysql:
     image: mysql:8.0
@@ -279,8 +259,6 @@ running on that port. Adjust the port mapping in
   
 
 ``` {.bash language="bash"}
-
-docker-compose logs backend
 
 docker-compose logs frontend
 
