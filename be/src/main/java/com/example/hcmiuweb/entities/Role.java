@@ -1,29 +1,37 @@
 package com.example.hcmiuweb.entities;
 
 import jakarta.persistence.*;
-import java.time.LocalDate;
 
-@Table(name = "Role")
 @Entity
+@Table(name = "roles")
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "RoleID", nullable = false, updatable = false)
-    private Long RoleID;
+    @Column(name = "role_id")
+    private Long id;
 
-    @Column(name = "RoleName", nullable = false, length = 255)
-    private String RoleName;
+    @Column(nullable = false)
+    private String roleName;
 
-    public long getRoleID() {
-        return RoleID;
+    // Constructors
+    public Role() {}
+
+    public Role(String roleName) {
+        this.roleName = roleName;
     }
-    public void setRoleID(long RoleID) {
-        this.RoleID = RoleID;
+
+    // Getters & Setters
+    public Long getId() {
+        return id;
     }
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getRoleName() {
-        return RoleName;
+        return roleName;
     }
-    public void setRoleName(String RoleName) {
-        this.RoleName = RoleName;
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
     }
 }
