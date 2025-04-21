@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = {"http://localhost:5173", "http://172.18.0.3:5173"})
 public class TestController {
 
     @GetMapping("/test")
@@ -16,4 +16,3 @@ public class TestController {
         return ResponseEntity.ok("Backend is working!");
     }
 }
-
