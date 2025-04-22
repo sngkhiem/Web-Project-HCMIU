@@ -341,7 +341,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"rating\": 4,\n  \"video\": {\n    \"id\": 1\n  },\n  \"user\": {\n    \"id\": 1\n  }\n}"
+              "raw": "{\n  \"rating\": 4,\n  \"videoId\": 4,\n  \"userId\": 1 \n}"
             },
             "url": {
               "raw": "http://localhost:8080/api/ratings",
@@ -401,7 +401,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"rating\": 5,\n  \"video\": {\n    \"id\": 1\n  },\n  \"user\": {\n    \"id\": 2\n  }\n}"
+              "raw": "{\n  \"rating\": 4,\n  \"videoId\": 4,\n  \"userId\": 2 \n}"
             },
             "url": {
               "raw": "http://localhost:8080/api/ratings",

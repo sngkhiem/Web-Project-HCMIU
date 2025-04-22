@@ -2,6 +2,10 @@ package com.example.hcmiuweb.entities;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "Video")
@@ -32,6 +36,15 @@ public class Video {
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
+
+    @OneToMany(mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<VideoRating> ratings = new HashSet<>();
+
+    @OneToMany(mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<VideoTag> tags = new HashSet<>();
+
+    @OneToMany(mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
 
     // Constructors
     public Video() {}
@@ -101,5 +114,44 @@ public class Video {
     }
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    public Set<VideoRating> getRatings() {
+        return ratings;
+    }
+
+    public void setRatings(Set<VideoRating> ratings) {
+        this.ratings = ratings;
+    }
+
+    // Add helper methods
+    public void addRating(VideoRating rating) {
+        ratings.add(rating);
+        rating.setVideo(this);
+    }
+
+    public void removeRating(VideoRating rating) {
+        ratings.remove(rating);
+        rating.setVideo(null);
+    }
+
+    public void addTag(VideoTag tag) {
+        tags.add(tag);
+        tag.setVideo(this);
+    }
+
+    public void removeTag(VideoTag tag) {
+        tags.remove(tag);
+        tag.setVideo(null);
+    }
+
+    public void addComment(Comment comment) {
+        comments.add(comment);
+        comment.setVideo(this);
+    }
+
+    public void removeComment(Comment comment) {
+        comments.remove(comment);
+        comment.setVideo(null);
     }
 }
