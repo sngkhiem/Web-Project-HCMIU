@@ -1,0 +1,474 @@
+{
+  "info": {
+    "_postman_id": "93652f87-f93e-4c8d-aeaf-ab4b03e7f134",
+    "name": "HCMIU Web Project - Complete Testing",
+    "description": "Testing the Video API endpoints with prerequisite setup",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Setup Prerequisites",
+      "item": [
+        {
+          "name": "1.1 Create Role",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"roleName\": \"USER\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/roles",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "roles"
+              ]
+            },
+            "description": "Create a role first - needed for creating users"
+          },
+          "response": []
+        },
+        {
+          "name": "1.2 Create User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"testuser\",\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\",\n  \"role\": {\n    \"id\": 1\n  }\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/users",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "users"
+              ]
+            },
+            "description": "Create a test user for video uploads"
+          },
+          "response": []
+        },
+        {
+          "name": "1.3 Create Category",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Education\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/categories",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "categories"
+              ]
+            },
+            "description": "Create a new category (needed before creating videos)"
+          },
+          "response": []
+        },
+        {
+          "name": "1.4 Get All Users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/users",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "users"
+              ]
+            },
+            "description": "Get all users to verify creation and get IDs"
+          },
+          "response": []
+        },
+        {
+          "name": "1.5 Get All Categories",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/categories",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "categories"
+              ]
+            },
+            "description": "Get all available categories to verify creation and get IDs"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "2. Video Operations",
+      "item": [
+        {
+          "name": "2.1 Create Video",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Spring Boot Tutorial\",\n  \"description\": \"Learn how to build RESTful APIs with Spring Boot\",\n  \"duration\": 600,\n  \"url\": \"https://example.com/videos/spring-boot-tutorial\",\n  \"uploader\": {\n    \"id\": 1\n  },\n  \"category\": {\n    \"id\": 1\n  }\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/videos",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "videos"
+              ]
+            },
+            "description": "Create a new video"
+          },
+          "response": []
+        },
+        {
+          "name": "2.2 Get All Videos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/videos",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "videos"
+              ]
+            },
+            "description": "Retrieves all videos"
+          },
+          "response": []
+        },
+        {
+          "name": "2.3 Get Video by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/videos/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "videos",
+                "1"
+              ]
+            },
+            "description": "Get a specific video by its ID"
+          },
+          "response": []
+        },
+        {
+          "name": "2.4 Get Videos by Uploader",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/videos/uploader/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "videos",
+                "uploader",
+                "1"
+              ]
+            },
+            "description": "Get all videos uploaded by a specific user"
+          },
+          "response": []
+        },
+        {
+          "name": "2.5 Get Videos by Category",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/videos/category/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "videos",
+                "category",
+                "1"
+              ]
+            },
+            "description": "Get all videos in a specific category"
+          },
+          "response": []
+        },
+        {
+          "name": "2.6 Search Videos by Title",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/videos/search?title=spring",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "videos",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "title",
+                  "value": "spring"
+                }
+              ]
+            },
+            "description": "Search videos by their title"
+          },
+          "response": []
+        },
+        {
+          "name": "2.7 Update Video",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Spring Boot Tutorial\",\n  \"description\": \"Updated description for Spring Boot API tutorial\",\n  \"duration\": 720,\n  \"url\": \"https://example.com/videos/updated-spring-boot-tutorial\",\n  \"uploader\": {\n    \"id\": 1\n  },\n  \"category\": {\n    \"id\": 1\n  }\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/videos/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "videos",
+                "1"
+              ]
+            },
+            "description": "Update an existing video"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "3. Video Ratings",
+      "item": [
+        {
+          "name": "3.1 Add Rating to Video (User 1)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 4,\n  \"video\": {\n    \"id\": 1\n  },\n  \"user\": {\n    \"id\": 1\n  }\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/ratings",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "ratings"
+              ]
+            },
+            "description": "Add a rating from user 1"
+          },
+          "response": []
+        },
+        {
+          "name": "3.2 Create Second User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"seconduser\",\n  \"email\": \"second@example.com\",\n  \"password\": \"password123\",\n  \"role\": {\n    \"id\": 1\n  }\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/users",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "users"
+              ]
+            },
+            "description": "Create a second user for another rating"
+          },
+          "response": []
+        },
+        {
+          "name": "3.3 Add Rating to Video (User 2)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 5,\n  \"video\": {\n    \"id\": 1\n  },\n  \"user\": {\n    \"id\": 2\n  }\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/ratings",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "ratings"
+              ]
+            },
+            "description": "Add a rating from user 2"
+          },
+          "response": []
+        },
+        {
+          "name": "3.4 Verify Video with Ratings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/videos/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "videos",
+                "1"
+              ]
+            },
+            "description": "Get the video to verify average rating calculation"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "4. Cleanup",
+      "item": [
+        {
+          "name": "Delete Video",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/videos/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "videos",
+                "1"
+              ]
+            },
+            "description": "Delete a video"
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
