@@ -156,7 +156,13 @@ mvn clean package
 
 Return to the project root and run:
 
-  
+``` {.bash language="bash"}
+
+cd be
+./mvnw spring-boot:run
+
+```
+This will run the backend
 
 ``` {.bash language="bash"}
 
@@ -172,11 +178,11 @@ This command will:
 
   
 
-- Build the Docker images for the backend and frontend.
+- Build the Docker images for SQL and frontend.
 
   
 
-- Create and start containers for the backend, frontend, and
+- Create and start containers for the frontend, and
 
 MySQL.
 
@@ -187,6 +193,7 @@ MySQL.
 (if available) execute any initialization scripts in the
 
 `initdb` folder.
+
 
   
 
