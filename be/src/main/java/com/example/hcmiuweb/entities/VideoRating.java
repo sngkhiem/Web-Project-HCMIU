@@ -1,5 +1,6 @@
 package com.example.hcmiuweb.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -8,11 +9,13 @@ public class VideoRating {
     @EmbeddedId
     private VideoRatingId id;
 
+    @JsonIgnore
     @ManyToOne
     @MapsId("userId")
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @JsonIgnore
     @ManyToOne
     @MapsId("videoId")
     @JoinColumn(name = "video_id", nullable = false)
@@ -31,32 +34,37 @@ public class VideoRating {
         this.id = new VideoRatingId(user.getId(), video.getId());
     }
 
-    // Getters & Setters
+    // Getters & Setters - keep as they are
+
     public VideoRatingId getId() {
         return id;
     }
+
     public void setId(VideoRatingId id) {
         this.id = id;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public User getUser() {
         return user;
     }
-    public void setUser(User user) {
-        this.user = user;
+
+    public int getRating() {
+        return rating;
+    }
+
+    public void setRating(int rating) {
+        this.rating = rating;
     }
 
     public Video getVideo() {
         return video;
     }
+
     public void setVideo(Video video) {
         this.video = video;
-    }
-
-    public int getRating() {
-        return rating;
-    }
-    public void setRating(int rating) {
-        this.rating = rating;
     }
 }
