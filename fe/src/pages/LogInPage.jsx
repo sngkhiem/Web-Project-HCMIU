@@ -1,10 +1,10 @@
 import React, { useState} from 'react'
 
 import { Link } from "react-router-dom";
-// import { useUserStore } from "../stores/useUserStore";
+import { useUserStore } from "../stores/useUserStore";
 
 const LogInPage = () => {
-    // const { login, loading } = useUserStore();
+    const { login, loading } = useUserStore();
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");

@@ -1,5 +1,7 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
+
+import { useVideoStore } from '../stores/useVideoStore'
 
 import ArrowRightIcon from '@heroicons/react/24/outline/ArrowRightIcon'
 
@@ -22,6 +24,13 @@ const reasons = [
 ]
 
 const HomePage = () => {
+    const { fetchAllVideos, videos, loading } = useVideoStore();
+    console.log(videos);
+
+    useEffect(() => {
+        fetchAllVideos();
+    }, [fetchAllVideos]);
+
     return (
         <div>
             <div className="relative">
@@ -81,6 +90,18 @@ const HomePage = () => {
                                 className="w-full h-auto rounded transition-transform duration-300 group-hover:scale-105"
                             />
                         </div>
+                        {/*
+                        {videos.map((video) => (
+                            <div key={video.id} className="relative group cursor-pointer">
+                                <div className="absolute top-0 left-[-15%] text-white text-7xl font-bold p-2 z-40">1</div>
+                                <img 
+                                    src="./assets/movie1.jpg" 
+                                    alt="Movie 1"
+                                    className="w-full h-auto rounded transition-transform duration-300 group-hover:scale-105"
+                                />
+                            </div>
+                        ))}
+                        */}
                     </div>
                 </div>
             </div>

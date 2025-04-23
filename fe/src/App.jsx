@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Navigate, Routes, Route } from "react-router-dom"
 
 import Navbar from "./components/Navbar";
@@ -9,7 +9,20 @@ import LogInPage from "./pages/LogInPage"
 import SignUpPage from "./pages/SignUpPage"
 import BrowsePage from "./pages/BrowsePage"
 import WatchPage from "./pages/WatchPage"
+
+import LoadingSpinner from "./components/LoadingSpinner"
+
+import { useUserStore } from "./stores/useUserStore"
+
 const App = () => {
+    const { user, checkAuth, checkingAuth } = useUserStore();
+
+	useEffect(() => {
+		checkAuth();
+	}, [checkAuth]);
+
+	if (checkingAuth) return <LoadingSpinner />;
+    
     return (
         <div class="font-outfit">
             <div className="bg-black sticky top-0 z-40">

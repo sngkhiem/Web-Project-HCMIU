@@ -1,4 +1,3 @@
-/*
 import { create } from "zustand";
 import axios from "../config/axios";
 import { toast } from "react-hot-toast";
@@ -13,7 +12,7 @@ export const useUserStore = create((set, get) => ({
 		set({ loading: true });
 
 		try {
-			const res = await axios.post("/auth/signup", { username, email, phoneNumber, password });
+			const res = await axios.post("/users", { username, email, phoneNumber, password });
 			set({ user: res.data, loading: false });
 		} catch (error) {
 			set({ loading: false });
@@ -25,7 +24,7 @@ export const useUserStore = create((set, get) => ({
 		set({ loading: true });
 
 		try {
-			const res = await axios.post("/auth/login", { email, password });
+			const res = await axios.post("/users", { email, password });
 
 			set({ user: res.data, loading: false });
 		} catch (error) {
@@ -36,7 +35,7 @@ export const useUserStore = create((set, get) => ({
 
 	logout: async () => {
 		try {
-			await axios.post("/auth/logout");
+			await axios.post("/logout");
 			set({ user: null });
 		} catch (error) {
 			toast.error(error.response?.data?.message || "An error occurred during logout");
@@ -46,7 +45,7 @@ export const useUserStore = create((set, get) => ({
 	updateProfile: async (data) => {
 		set({ isUpdatingProfile: true });
 		try {
-		  	const res = await axios.put("/auth/update-profile", data);
+		  	const res = await axios.put("/update-profile", data);
 		  	set({ user: res.data });
 		  	toast.success("Profile updated successfully");
 		} catch (error) {
@@ -60,7 +59,7 @@ export const useUserStore = create((set, get) => ({
 	checkAuth: async () => {
 		set({ checkingAuth: true });
 		try {
-			const response = await axios.get("/auth/profile");
+			const response = await axios.get("/profile");
 			set({ user: response.data, checkingAuth: false });
 		} catch (error) {
 			console.log(error.message);
@@ -74,7 +73,7 @@ export const useUserStore = create((set, get) => ({
 
 		set({ checkingAuth: true });
 		try {
-			const response = await axios.post("/auth/refresh-token");
+			const response = await axios.post("/refresh-token");
 			set({ checkingAuth: false });
 			return response.data;
 		} catch (error) {
@@ -118,4 +117,3 @@ axios.interceptors.response.use(
 		return Promise.reject(error);
 	}
 );
-*/

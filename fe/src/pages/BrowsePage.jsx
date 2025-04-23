@@ -1,10 +1,19 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
+
+import { useVideoStore } from '../stores/useVideoStore'
 
 import PlayIcon from '@heroicons/react/24/outline/PlayIcon'
 import InformationCircleIcon from '@heroicons/react/24/outline/InformationCircleIcon'
 
 const BrowsePage = () => {
+    const { fetchAllVideos, videos, loading } = useVideoStore();
+    console.log(videos);
+
+    useEffect(() => {
+        fetchAllVideos();
+    }, [fetchAllVideos]);
+
     return (
         <div>
             <div className="relative">
