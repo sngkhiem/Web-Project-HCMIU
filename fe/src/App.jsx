@@ -1,50 +1,34 @@
-import { useEffect, useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
-import "./App.css";
+import React from 'react'
+import { Navigate, Routes, Route } from "react-router-dom"
 
-function App() {
-    const [count, setCount] = useState(0);
-    const [message, setMessage] = useState(""); // State for backend message
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 
-    useEffect(() => {
-        fetch("http://localhost:8080/api/test")
-            .then(response => response.text()) // If your API returns plain text
-            .then(data => {
-                console.log("Backend Response:", data);
-                setMessage(data); // Save backend response to state
-            })
-            .catch(error => console.error("Error fetching data:", error));
-    }, []);
-
+import HomePage from "./pages/HomePage"
+import LogInPage from "./pages/LogInPage"
+import SignUpPage from "./pages/SignUpPage"
+import BrowsePage from "./pages/BrowsePage"
+import WatchPage from "./pages/WatchPage"
+const App = () => {
     return (
-        <>
-            <div>
-                <a href="https://google.com" target="_blank">
-                    <img src={viteLogo} className="logo" alt="Vite logo" />
-                </a>
-                <a href="https://react.dev" target="_blank">
-                    <img src={reactLogo} className="logo react" alt="React logo" />
-                </a>
+        <div class="font-outfit">
+            <div className="bg-black sticky top-0 z-40">
+                <Navbar />
             </div>
-            <h1>Vite + T</h1>
-            <div className="card">
-                <button onClick={() => setCount((count) => count + 1)}>
-                    Count is {count}
-                </button>
-                <p>Edit <code>src/App.jsx</code> and save to test HMR</p>
-            </div>
-            <p className="read-the-docs">
-                Click on the Vite and React logos to learn more
-            </p>
+    
+            <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/login" element={<LogInPage />} />
+                <Route path="/signup" element={<SignUpPage />} />
+                
+                <Route path="/browse" element={<BrowsePage />} />
+                <Route path="/watch" element={<WatchPage />} />
+            </Routes>
+    
+            <Footer />
 
-            {/* Display Backend Message */}
-            <div className="backend-message">
-                <h2>Backend Response:</h2>
-                <p>{message ? message : "Fetching data..."}</p>
-            </div>
-        </>
-    );
+        </div>
+    )
 }
 
-export default App;
+export default App
