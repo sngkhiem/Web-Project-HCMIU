@@ -16,25 +16,36 @@ const BrowsePage = () => {
 
     return (
         <div>
-            <div className="relative">
-                {/* Dark overlay */}
-                <div className="absolute inset-0 bg-black/60 z-10"></div>
-                
-                {/* Background image */}
-                <div 
-                    className="absolute inset-0 bg-[url('/assets/hero.jpg')] bg-cover bg-center"
-                    style={{
-                        backgroundImage: "linear-gradient(to bottom, rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('/assets/hero.jpg')"
-                    }}
-                ></div>
+            <div className="relative h-[80vh] w-full overflow-hidden">
+                {/* Video Background */}
+                <div className="absolute inset-0 w-full h-full">
+                    <div className="absolute inset-0 w-full h-full">
+                        <iframe
+                            className="absolute top-1/2 left-1/2 w-[300%] h-[300%] -translate-x-1/2 -translate-y-1/2"
+                            src="https://www.youtube.com/embed/INQ20VdF9uQ?si=QROHiwtK3w7oqogQ&autoplay=1&mute=1&loop=1&playlist=INQ20VdF9uQ&controls=0&modestbranding=1&rel=0&showinfo=0&hd=1&vq=hd1080"
+                            title="YouTube video player"
+                            frameBorder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            referrerPolicy="strict-origin-when-cross-origin"
+                            allowFullScreen
+                        ></iframe>
+                    </div>
+                    {/* Gradient overlay */}
+                    <div 
+                        className="absolute inset-0"
+                        style={{
+                            background: 'linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 100%)'
+                        }}
+                    ></div>
+                </div>
                 
                 <div className="relative z-20 mx-auto max-w-7xl px-10 py-32">
                     <div className="w-1/2">
                         <div className="flex flex-col gap-y-2">
-                            <h1 className="text-4xl font-bold text-white">Man Utd v Wolves</h1>
+                            <h1 className="text-4xl font-bold text-white">Một Vòng Việt Nam</h1>
                         </div>
-                        <p className="mt-4 text-gray-400">
-                            A thrilling Premier League clash as Manchester United host Wolverhampton Wanderers at Old Trafford. Both teams look to secure vital points in their 2024/25 campaign, with United aiming to maintain their top-four push while Wolves seek to climb up the table.
+                        <p className="mt-4 text-gray-300">
+                            "Một Vòng Việt Nam" là một ca khúc nổi bật do nhạc sĩ Đông Thiên Đức sáng tác, được ca sĩ Tùng Dương thể hiện và phát hành vào tháng 6 năm 2023. Bài hát được viết riêng cho chương trình du lịch và ẩm thực "Around Vietnam" phát sóng trên kênh VTV3, nhằm tôn vinh vẻ đẹp thiên nhiên và con người Việt Nam.
                         </p>
 
                         <div className="flex items-center gap-x-4 mt-8">
@@ -42,7 +53,7 @@ const BrowsePage = () => {
                                 <PlayIcon className="w-6 h-6 mr-2" />
                                 Play
                             </Link>
-                            <button className="flex items-center justify-center rounded-md bg-gray-100 px-6 py-2 text-md font-semibold text-gray-900 shadow-xs hover:bg-gray-200 transition-colors">
+                            <button className="flex items-center justify-center rounded-md bg-white/20 px-6 py-2 text-md font-semibold text-white shadow-xs hover:bg-white/30 transition-colors">
                                 <InformationCircleIcon className="w-6 h-6 mr-2" />
                                 More Info
                             </button>

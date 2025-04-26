@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import { useVideoStore } from '../stores/useVideoStore'
 
 import ArrowRightIcon from '@heroicons/react/24/outline/ArrowRightIcon'
+import SearchCard from '../components/SearchCard'
 
 const reasons = [
     {
@@ -25,6 +26,7 @@ const reasons = [
 
 const HomePage = () => {
     const { fetchAllVideos, videos, loading } = useVideoStore();
+    const [email, setEmail] = useState('');
     console.log(videos);
 
     useEffect(() => {
@@ -65,9 +67,14 @@ const HomePage = () => {
                                 type="email"
                                 placeholder="Email"
                                 required={true}
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
                                 className="w-full max-w-md px-5 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-50 bg-black-50 text-white"
                             />
-                            <Link to="/browse" className="flex items-center gap-2 bg-purple-700 text-xl text-white px-8 py-3 rounded-full font-semibold hover:bg-purple-600 transition-colors whitespace-nowrap">
+                            <Link 
+                                to={`/signup?email=${encodeURIComponent(email)}`} 
+                                className="flex items-center gap-2 bg-purple-700 text-xl text-white px-8 py-3 rounded-full font-semibold hover:bg-purple-600 transition-colors whitespace-nowrap"
+                            >
                                 Get Started <ArrowRightIcon className="w-5 h-5" />
                             </Link>
                         </div>
