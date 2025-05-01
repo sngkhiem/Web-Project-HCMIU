@@ -15,12 +15,11 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     @Override
-    public void run(String... args) {
-        // Add default roles if none exist
+    public void run(String... args) throws Exception {
         if (roleRepository.count() == 0) {
             roleRepository.save(new Role("USER"));
             roleRepository.save(new Role("ADMIN"));
-            System.out.println("Default roles creates");
+            System.out.println("Default roles created");
         }
     }
 }
