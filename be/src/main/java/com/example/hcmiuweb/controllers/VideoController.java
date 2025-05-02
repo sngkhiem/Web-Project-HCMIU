@@ -1,15 +1,23 @@
 package com.example.hcmiuweb.controllers;
 
 import com.example.hcmiuweb.dtos.VideoDTO;
+import com.example.hcmiuweb.entities.Category;
+import com.example.hcmiuweb.entities.User;
 import com.example.hcmiuweb.entities.Video;
 import com.example.hcmiuweb.services.CategoryService;
+import com.example.hcmiuweb.services.UserService;
 import com.example.hcmiuweb.services.VideoService;
+import com.example.hcmiuweb.services.UserDetailsImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = {"http://localhost:5173", "http://172.18.0.3:5173"})
@@ -18,10 +26,12 @@ public class VideoController {
 
     private final VideoService videoService;
     private final CategoryService categoryService;
+    private final UserService userService;
 
-    public VideoController(VideoService videoService, CategoryService categoryService) {
+    public VideoController(VideoService videoService, CategoryService categoryService, UserService userService) {
         this.videoService = videoService;
         this.categoryService = categoryService;
+        this.userService = userService;
     }
 
     @GetMapping
@@ -52,25 +62,74 @@ public class VideoController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createVideo(@RequestBody Video video) {
+    public ResponseEntity<?> createVideo(@RequestBody Map<String, Object> videoRequest) {
         try {
-            // Set upload date if not provided
-            if (video.getUploadDate() == null) {
-                video.setUploadDate(LocalDateTime.now());
+            // Get the currently authenticated user
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+            Long authenticatedUserId = userDetails.getId();
+            
+            // Extract userId from the request (if provided)
+            Long requestedUserId = null;
+            if (videoRequest.get("userId") != null) {
+                requestedUserId = Long.valueOf(videoRequest.get("userId").toString());
+            } else {
+                // If no userId provided, default to authenticated user
+                requestedUserId = authenticatedUserId;
             }
-
+            
+            // Check if user is trying to create a video for another user
+            if (!requestedUserId.equals(authenticatedUserId)) {
+                // Check if user has admin role and moderator
+                boolean isAdmin = authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"));
+                
+                if (!isAdmin) {
+                    // Regular users can only create videos for themselves
+                    return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                            .body("You are not allowed to create a video for another user");
+                }
+                // Admins and moderators can proceed to create videos for other users
+            }
+            
+            // Get the user for whom we're creating the video
+            User uploader = userService.findUserById(requestedUserId)
+                    .orElse(null);
+            
+            if (uploader == null) {
+                return ResponseEntity.badRequest()
+                        .body("User with ID " + requestedUserId + " does not exist");
+            }
+            
+            // Extract categoryId from the request
+            Long categoryId = null;
+            if (videoRequest.get("categoryId") != null) {
+                categoryId = Long.valueOf(videoRequest.get("categoryId").toString());
+            }
+            
             // Verify category exists
-            if (video.getCategory() == null || video.getCategory().getId() == null) {
+            if (categoryId == null) {
                 return ResponseEntity.badRequest()
                         .body("Category must be specified");
             }
-
-            // Verify that category exists in database using CategoryService
-            if (!categoryService.existsById(video.getCategory().getId())) {
+            
+            Category category = categoryService.findCategoryById(categoryId)
+                    .orElse(null);
+            
+            if (category == null) {
                 return ResponseEntity.badRequest()
-                        .body("Category with ID " + video.getCategory().getId() + " does not exist");
+                        .body("Category with ID " + categoryId + " does not exist");
             }
-
+            
+            // Create video object from request
+            Video video = new Video();
+            video.setTitle((String) videoRequest.get("title"));
+            video.setDescription((String) videoRequest.get("description"));
+            video.setUrl((String) videoRequest.get("url"));
+            video.setThumbnailUrl((String) videoRequest.get("thumbnailUrl"));
+            video.setUploadDate(LocalDateTime.now());
+            video.setUploader(uploader);
+            video.setCategory(category);
+            
             // Save video
             Video savedVideo = videoService.createVideo(video);
 
