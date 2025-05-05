@@ -13,13 +13,16 @@ public class Notification {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private User user; // Recipient of the notification
+    private User recipient; // Renamed from 'user' to 'recipient'
 
     @Column(nullable = false)
     private String type; // e.g., "NEW_VIDEO", "NEW_COMMENT"
 
     @Column(nullable = false)
     private String message;
+    
+    @Column
+    private String link; // Added link field for navigation
 
     @ManyToOne
     @JoinColumn(name = "related_video_id")
@@ -34,10 +37,11 @@ public class Notification {
     // Constructors
     public Notification() {}
 
-    public Notification(User user, String type, String message, Video relatedVideo, LocalDateTime createdAt, boolean isRead) {
-        this.user = user;
+    public Notification(User recipient, String type, String message, String link, Video relatedVideo, LocalDateTime createdAt, boolean isRead) {
+        this.recipient = recipient;
         this.type = type;
         this.message = message;
+        this.link = link;
         this.relatedVideo = relatedVideo;
         this.createdAt = createdAt;
         this.isRead = isRead;
@@ -51,11 +55,11 @@ public class Notification {
         this.id = id;
     }
 
-    public User getUser() {
-        return user;
+    public User getRecipient() {
+        return recipient;
     }
-    public void setUser(User user) {
-        this.user = user;
+    public void setRecipient(User recipient) {
+        this.recipient = recipient;
     }
 
     public String getType() {
@@ -70,6 +74,13 @@ public class Notification {
     }
     public void setMessage(String message) {
         this.message = message;
+    }
+    
+    public String getLink() {
+        return link;
+    }
+    public void setLink(String link) {
+        this.link = link;
     }
 
     public Video getRelatedVideo() {
