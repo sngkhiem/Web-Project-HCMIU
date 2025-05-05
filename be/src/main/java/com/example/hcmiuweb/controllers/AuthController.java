@@ -135,4 +135,21 @@ public class AuthController {
             return ResponseEntity.badRequest().body(new MessageResponse("Error: " + e.getMessage()));
         }
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logoutUser() {
+        try {
+            logger.info("Logout attempt");
+            
+            // Clear the authentication from the security context
+            SecurityContextHolder.clearContext();
+            
+            logger.info("User successfully logged out");
+            
+            return ResponseEntity.ok(new MessageResponse("User logged out successfully!"));
+        } catch (Exception e) {
+            logger.error("Logout error: {}", e.getMessage());
+            return ResponseEntity.badRequest().body(new MessageResponse("Error during logout: " + e.getMessage()));
+        }
+    }
 }
