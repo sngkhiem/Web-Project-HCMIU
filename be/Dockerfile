@@ -1,4 +1,4 @@
-FROM maven:3.8.7-eclipse-temurin-17
+FROM maven:3.9.6-eclipse-temurin-21
 WORKDIR /app
 
 # Pre-download dependencies for caching

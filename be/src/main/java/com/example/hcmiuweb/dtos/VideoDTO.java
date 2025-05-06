@@ -10,6 +10,7 @@ public class VideoDTO {
     private LocalDateTime uploadDate;
     private Integer duration;
     private String url;
+    private String thumbnailUrl;
     private Long uploaderId;
     private String uploaderUsername;
     private Long categoryId;
@@ -56,4 +57,7 @@ public class VideoDTO {
 
     public Integer getRatingCount() { return ratingCount; }
     public void setRatingCount(Integer ratingCount) { this.ratingCount = ratingCount; }
+
+    public String getThumbnailUrl() { return thumbnailUrl; }
+    public void setThumbnailUrl(String thumbnailUrl) { this.thumbnailUrl = thumbnailUrl;}
 }
