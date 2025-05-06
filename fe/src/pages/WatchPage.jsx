@@ -1,7 +1,21 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+import { useParams } from "react-router-dom";
+
 import { Link } from 'react-router-dom'
+import { useVideoStore } from '../stores/useVideoStore';
 
 const WatchPage = () => {
+    const { id } = useParams(); // Get video ID from URL
+
+    const { video, fetchVideo } = useVideoStore();
+
+    // Fetch video details when the component mounts
+    useEffect(() => {
+        fetchVideo(id);
+    }, [id, fetchVideo]);
+
+    console.log("Video is " + video)
+
     return (
         <div>
             <div className="relative flex items-center justify-center py-12 bg-black">
@@ -18,7 +32,7 @@ const WatchPage = () => {
 
                 {/* Content */}
                 <div className="relative z-20 flex items-center justify-center w-full">
-                    <iframe width="1120" height="630" src="https://www.youtube.com/embed/INQ20VdF9uQ?si=QROHiwtK3w7oqogQ" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen></iframe>
+                    <iframe width="1120" height="630" src={`https://youtube.com/embed/${id}`} title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                 </div>
             </div>
         </div>

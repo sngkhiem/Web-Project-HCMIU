@@ -1,11 +1,48 @@
-import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useEffect, useState, useRef } from 'react';
+import { Link } from 'react-router-dom';
 
-import { useVideoStore } from '../stores/useVideoStore'
-import { useUserStore } from '../stores/useUserStore'
+import VideoThumbnail from '../components/VideoThumbnail';
 
-import ArrowRightIcon from '@heroicons/react/24/outline/ArrowRightIcon'
-import SearchCard from '../components/SearchCard'
+import { useVideoStore } from '../stores/useVideoStore';
+import { useUserStore } from '../stores/useUserStore';
+
+import ArrowRightIcon from '@heroicons/react/24/outline/ArrowRightIcon';
+import SearchCard from '../components/SearchCard';
+
+import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid"
+
+const videoIds = [
+    {
+        id: 1,
+        title: "NGỰA Ô - TeuYungBoy, Dangrangto (Prod. DONAL) | Official MV",
+        description: "Music video of NGỰA Ô",
+        videoId: "cm0C1c2UuQA"
+    },
+    {
+        id: 2,
+        title: "2GOILAYS - DMT, Dangrangto, TeuYungBoy (Prod. DONAL) | Official MV",
+        description: "Music video of 2GOILAYS",
+        videoId: "ILsA2VFJ150"
+    },
+    {
+        id: 3,
+        title: "DONALD GOLD - ADAMN [OFFICIAL MV]",
+        description: "Music video of ADAMN",
+        videoId: "B3wR-ZVe0Rw"
+    },
+    {
+        id: 4,
+        title: "DONALD GOLD - ĐỔI TƯ THẾ x ANDREE RIGHT HAND | OFFICIAL MUSIC VIDEO",
+        description: "Music video of Đổi Tư Thế",
+        videoId: "wkMwq6NUUmM"
+    },
+    {
+        id: 5,
+        title: "HIEUTHUHAI - TRÌNH (prod. by Kewtiie)",
+        description: "Music video of TRÌNH",
+        videoId: "7kO_ALcwNAw"
+    }
+];
 
 const reasons = [
     {
@@ -27,14 +64,20 @@ const reasons = [
 
 const HomePage = () => {
     const { fetchAllVideos, videos, loading } = useVideoStore();
-    const {user } = useUserStore();
+    const { user } = useUserStore();
     const [email, setEmail] = useState('');
-    console.log("Videos: " + videos);
-    console.log("user: " + user)
 
     useEffect(() => {
         fetchAllVideos();
     }, [fetchAllVideos]);
+    
+    const scrollRef = useRef(null);
+
+    const scroll = (offset) => {
+        if (scrollRef.current) {
+            scrollRef.current.scrollBy({ left: offset, behavior: "smooth" });
+        }
+    };
 
     return (
         <div>
@@ -87,32 +130,29 @@ const HomePage = () => {
 
             {/* Trending Section */}
             <div className="bg-black py-16">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <h2 className="text-3xl font-bold text-white mb-8">Trending Now</h2>
-                    
-                    <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-4">
-                        {/* Movie 1 */}
-                        <div className="relative group cursor-pointer">
-                            <div className="absolute top-0 left-[-15%] text-white text-7xl font-bold p-2 z-40">1</div>
-                            <img 
-                                src="./assets/movie1.jpg" 
-                                alt="Movie 1"
-                                className="w-full h-auto rounded transition-transform duration-300 group-hover:scale-105"
-                            />
-                        </div>
-                        {/*
-                        {videos.map((video) => (
-                            <div key={video.id} className="relative group cursor-pointer">
-                                <div className="absolute top-0 left-[-15%] text-white text-7xl font-bold p-2 z-40">1</div>
-                                <img 
-                                    src="./assets/movie1.jpg" 
-                                    alt="Movie 1"
-                                    className="w-full h-auto rounded transition-transform duration-300 group-hover:scale-105"
-                                />
-                            </div>
-                        ))}
-                        */}
+                <h2 className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-3xl font-bold text-white mb-8">Trending Now</h2>
+                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <button
+                        onClick={() => scroll(-900)}
+                        className="absolute top-0 left-0 z-10 h-full px-2 cursor-pointer"
+                    >
+                        <ChevronLeftIcon className="text-white h-10" />
+                    </button>
+
+                    <div ref={scrollRef} className="relative flex overflow-x-auto space-x-4 no-scrollbar scroll-smooth">
+                        {videoIds.map(video => {
+                            return (
+                                <VideoThumbnail title={video.title} description={video.description} videoId={video.videoId} />
+                            )
+                        })}
                     </div>
+
+                    <button
+                        onClick={() => scroll(900)}
+                        className="absolute top-0 right-0 z-10 h-full px-2 cursor-pointer"
+                    >
+                        <ChevronRightIcon className="text-white h-10" />
+                    </button>
                 </div>
             </div>
 

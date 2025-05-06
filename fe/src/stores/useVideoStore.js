@@ -2,6 +2,8 @@ import { create } from "zustand";
 import axios from "axios";
 import toast from "react-hot-toast";
 
+import { useUserStore } from "./useUserStore"
+
 export const useVideoStore = create((set) => ({
 	videos: [],
 	video: [],
@@ -26,8 +28,14 @@ export const useVideoStore = create((set) => ({
 	fetchAllVideos: async () => {
 		set({ loading: true });
 		try {
-			const response = await axios.get("http://localhost:8080/api/videos");
-			set({ videos: response.data.videos, loading: false });
+			const token = useUserStore.getState().token;
+			const response = await axios.get("http://localhost:8080/api/videos", {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				}
+			});
+			console.log(response.data)
+			set({ videos: response.data, loading: false });
 		} catch (error) {
 			set({ error: "Failed to fetch videos", loading: false });
 			toast.error(error.response.data.error || "Failed to fetch videos");
@@ -37,8 +45,12 @@ export const useVideoStore = create((set) => ({
 	fetchVideo: async (id) => {
 		set({ loading: true });
 		try {
-			const response = await axios.get(`/videos/${id}`);
-			set({ video: response.data.video, loading: false });
+			const response = await axios.get(`http://localhost:8080/api/videos/${id}`, {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				}
+			});
+			set({ video: response.data, loading: false });
 		} catch (error) {
 			set({ error: "Failed to fetch videos", loading: false });
 			toast.error(error.response.data.error || "Failed to fetch videos");
