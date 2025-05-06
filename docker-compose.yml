@@ -3,24 +3,18 @@ services:
     build: ./fe
     volumes:
       - ./fe:/app
-      - /app/node_modules  # Prevents overwriting container’s node_modules with an empty host folder
+      - /app/node_modules
     ports:
       - "5173:5173"
     command: npm run dev
 
-  mysql:
-    image: mysql:8.0
+  backend:
+    build: ./be
     ports:
-      - "3307:3306"
+      - "8080:8080"
     environment:
-      MYSQL_ROOT_PASSWORD: cvip
-      MYSQL_DATABASE: db
-      MYSQL_USER: cvip
-      MYSQL_PASSWORD: cvip
+      - SPRING_DATASOURCE_URL=jdbc:mysql://100.93.79.71:3306/db
+      - SPRING_DATASOURCE_USERNAME=cvip
+      - SPRING_DATASOURCE_PASSWORD=roadtowf
     volumes:
-      - mysql_data:/var/lib/mysql
-      - ./initdb:/docker-entrypoint-initdb.d
-    restart: unless-stopped
-
-volumes:
-  mysql_data:
+      - ./uploaded-videos:/app/videos
