@@ -9,6 +9,7 @@ import LogInPage from "./pages/LogInPage"
 import SignUpPage from "./pages/SignUpPage"
 import BrowsePage from "./pages/BrowsePage"
 import WatchPage from "./pages/WatchPage"
+import ProfilePage from './pages/ProfilePage';
 
 import LoadingSpinner from "./components/LoadingSpinner"
 
@@ -31,11 +32,14 @@ const App = () => {
     
             <Routes>
                 <Route path="/" element={<HomePage />} />
-                <Route path="/login" element={<LogInPage />} />
-                <Route path="/signup" element={<SignUpPage />} />
+
+                <Route path='/signup' element={!user ? <SignUpPage /> : <Navigate to='/' />} />
+                <Route path='/login' element={!user ? <LogInPage /> : <Navigate to='/' />} />
                 
                 <Route path="/browse" element={<BrowsePage />} />
                 <Route path="/watch" element={<WatchPage />} />
+
+                <Route path="/profile" element={user ? <ProfilePage /> : <Navigate to="/" />} />
             </Routes>
     
             <Footer />

@@ -1,9 +1,11 @@
 import { create } from "zustand";
-import axios from "../config/axios";
+import axios from "axios";
 import { toast } from "react-hot-toast";
 
 export const useUserStore = create((set, get) => ({
 	user: null,
+	token: localStorage.getItem('token') || null,
+
 	loading: false,
 	checkingAuth: true,
 	isUpdatingProfile: false,
@@ -12,7 +14,7 @@ export const useUserStore = create((set, get) => ({
 		set({ loading: true });
 
 		try {
-			const res = await axios.post("/users", { username, email, phoneNumber, password });
+			const res = await axios.post("/auth/signup", { username, email, phoneNumber, password });
 			set({ user: res.data, loading: false });
 		} catch (error) {
 			set({ loading: false });
@@ -20,13 +22,15 @@ export const useUserStore = create((set, get) => ({
 		}
 	},
 
-	login: async (email, password) => {
+	login: async (username, password) => {
 		set({ loading: true });
 
 		try {
-			const res = await axios.post("/users", { email, password });
+			console.log(username, password)
+			const res = await axios.post("http://localhost:8080/api/auth/signin", { username, password } );
+			set({ user: res.data, token: res.data.token, loading: false });
 
-			set({ user: res.data, loading: false });
+			console.log(res.data)
 		} catch (error) {
 			set({ loading: false });
 			toast.error(error.response.data.message || "An error occurred");
@@ -35,7 +39,7 @@ export const useUserStore = create((set, get) => ({
 
 	logout: async () => {
 		try {
-			await axios.post("/logout");
+			await axios.post("http://localhost:8080/api/auth/logout");
 			set({ user: null });
 		} catch (error) {
 			toast.error(error.response?.data?.message || "An error occurred during logout");
@@ -73,7 +77,7 @@ export const useUserStore = create((set, get) => ({
 
 		set({ checkingAuth: true });
 		try {
-			const response = await axios.post("/refresh-token");
+			const response = await axios.post("http://localhost:8080/api/refresh-token");
 			set({ checkingAuth: false });
 			return response.data;
 		} catch (error) {
@@ -82,38 +86,3 @@ export const useUserStore = create((set, get) => ({
 		}
 	},
 }));
-
-// TODO: Implement the axios interceptors for refreshing access token
-
-// Axios interceptor for token refresh
-let refreshPromise = null;
-
-axios.interceptors.response.use(
-	(response) => response,
-	async (error) => {
-		const originalRequest = error.config;
-		if (error.response?.status === 401 && !originalRequest._retry) {
-			originalRequest._retry = true;
-
-			try {
-				// If a refresh is already in progress, wait for it to complete
-				if (refreshPromise) {
-					await refreshPromise;
-					return axios(originalRequest);
-				}
-
-				// Start a new refresh process
-				refreshPromise = useUserStore.getState().refreshToken();
-				await refreshPromise;
-				refreshPromise = null;
-
-				return axios(originalRequest);
-			} catch (refreshError) {
-				// If refresh fails, redirect to login or handle as needed
-				useUserStore.getState().logout();
-				return Promise.reject(refreshError);
-			}
-		}
-		return Promise.reject(error);
-	}
-);

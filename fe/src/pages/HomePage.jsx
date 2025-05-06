@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import { useVideoStore } from '../stores/useVideoStore'
+import { useUserStore } from '../stores/useUserStore'
 
 import ArrowRightIcon from '@heroicons/react/24/outline/ArrowRightIcon'
 import SearchCard from '../components/SearchCard'
@@ -26,8 +27,10 @@ const reasons = [
 
 const HomePage = () => {
     const { fetchAllVideos, videos, loading } = useVideoStore();
+    const {user } = useUserStore();
     const [email, setEmail] = useState('');
-    console.log(videos);
+    console.log("Videos: " + videos);
+    console.log("user: " + user)
 
     useEffect(() => {
         fetchAllVideos();

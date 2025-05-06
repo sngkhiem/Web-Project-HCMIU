@@ -6,12 +6,12 @@ import { useUserStore } from "../stores/useUserStore";
 const LogInPage = () => {
     const { login, loading } = useUserStore();
 
-    const [email, setEmail] = useState("");
+    const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     
     const handleSubmit = async (e) => {
         e.preventDefault();
-        login(email, password);
+        login(username, password);
     };
 
     return (
@@ -42,20 +42,19 @@ const LogInPage = () => {
 
                     <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
                         <form onSubmit={handleSubmit} className="space-y-6">
-                        {/* Email */}
+                        {/* Username */}
                         <div>
-                            <label htmlFor="email" className="block text-sm/6 font-medium">
-                            Email
+                            <label htmlFor="username" className="block text-sm/6 font-medium">
+                            Username
                             </label>
                             <div className="mt-2">
                             <input
-                                id="email"
-                                name="email"
-                                type="email"
-                                value={email}
+                                id="username"
+                                name="username"
+                                type="text"
+                                value={username}
                                 required
-                                autoComplete="email"
-                                onChange={(e) => setEmail(e.target.value)}
+                                onChange={(e) => setUsername(e.target.value)}
                                 className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                             />
                             </div>

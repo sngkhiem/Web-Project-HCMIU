@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import axios from "../config/axios";
+import axios from "axios";
 import toast from "react-hot-toast";
 
 export const useVideoStore = create((set) => ({
@@ -26,7 +26,7 @@ export const useVideoStore = create((set) => ({
 	fetchAllVideos: async () => {
 		set({ loading: true });
 		try {
-			const response = await axios.get("/videos");
+			const response = await axios.get("http://localhost:8080/api/videos");
 			set({ videos: response.data.videos, loading: false });
 		} catch (error) {
 			set({ error: "Failed to fetch videos", loading: false });
