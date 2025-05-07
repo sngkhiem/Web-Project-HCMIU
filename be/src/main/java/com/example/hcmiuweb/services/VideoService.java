@@ -92,6 +92,7 @@ public class VideoService {
                     existingVideo.setDescription(video.getDescription());
                     existingVideo.setUrl(video.getUrl());
                     existingVideo.setDuration(video.getDuration());
+                    existingVideo.setThumbnailUrl(video.getThumbnailUrl()); // Added this line to update thumbnailUrl
 
                     // Preserve upload date if not provided
                     if (video.getUploadDate() != null) {
@@ -142,6 +143,7 @@ public class VideoService {
         dto.setUploadDate(video.getUploadDate());
         dto.setDuration(video.getDuration());
         dto.setUrl(video.getUrl());
+        dto.setThumbnailUrl(video.getThumbnailUrl()); // Added this line to include thumbnailUrl
 
         // Set uploader info
         if (video.getUploader() != null) {
