@@ -1,10 +1,59 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 
 import { useVideoStore } from '../stores/useVideoStore'
 
+import VideoThumbnail from '../components/VideoThumbnail';
+
 import PlayIcon from '@heroicons/react/24/outline/PlayIcon'
 import InformationCircleIcon from '@heroicons/react/24/outline/InformationCircleIcon'
+
+import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid"
+
+const videoIds = [
+    {
+        id: 1,
+        title: "NGỰA Ô - TeuYungBoy, Dangrangto (Prod. DONAL) | Official MV",
+        description: "Music video of NGỰA Ô",
+        videoId: "cm0C1c2UuQA"
+    },
+    {
+        id: 2,
+        title: "2GOILAYS - DMT, Dangrangto, TeuYungBoy (Prod. DONAL) | Official MV",
+        description: "Music video of 2GOILAYS",
+        videoId: "ILsA2VFJ150"
+    },
+    {
+        id: 3,
+        title: "DONALD GOLD - ADAMN [OFFICIAL MV]",
+        description: "Music video of ADAMN",
+        videoId: "B3wR-ZVe0Rw"
+    },
+    {
+        id: 4,
+        title: "DONALD GOLD - ĐỔI TƯ THẾ x ANDREE RIGHT HAND | OFFICIAL MUSIC VIDEO",
+        description: "Music video of Đổi Tư Thế",
+        videoId: "wkMwq6NUUmM"
+    },
+    {
+        id: 5,
+        title: "HIEUTHUHAI - TRÌNH (prod. by Kewtiie)",
+        description: "Music video of TRÌNH",
+        videoId: "7kO_ALcwNAw"
+    },
+    {
+        id: 6,
+        title: "THANHDRAW - IDOOMYTHANG // Official Music Video",
+        description: "Music video of IDOOMYTHANG",
+        videoId: "rAJnKTZAGsU"
+    },
+    {
+        id: 7,
+        title: "HIEUTHUHAI - Không Thể Say (prod. by Kewtiie) [Official Lyric Video]",
+        description: "Music video of Không Thể Say",
+        videoId: "d6pgocXnK8U"
+    }
+];
 
 const BrowsePage = () => {
     const { fetchAllVideos, videos, loading } = useVideoStore();
@@ -13,6 +62,14 @@ const BrowsePage = () => {
     useEffect(() => {
         fetchAllVideos();
     }, [fetchAllVideos]);
+
+    const scrollRef = useRef(null);
+
+    const scroll = (offset) => {
+        if (scrollRef.current) {
+            scrollRef.current.scrollBy({ left: offset, behavior: "smooth" });
+        }
+    };
 
     return (
         <div>
@@ -62,22 +119,59 @@ const BrowsePage = () => {
                 </div>
             </div>
 
-            {/* My List Section */}
-            <div className="bg-black py-16">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <h2 className="text-3xl font-bold text-white mb-8">My List</h2>
-                        
-                    <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-4">
-                        {/* Movie 1 */}
-                        <div className="relative group cursor-pointer">
-                            <div className="absolute top-0 left-[-15%] text-white text-7xl font-bold p-2 z-40">1</div>
-                            <img 
-                                src="./assets/movie1.jpg" 
-                                alt="Movie 1"
-                                className="w-full h-auto rounded transition-transform duration-300 group-hover:scale-105"
-                            />
-                        </div>
+            {/* Top Picks */}
+            <div className="bg-black py-8">
+                <h2 className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-3xl font-bold text-white mb-8">Top Picks</h2>
+                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <button
+                        onClick={() => scroll(-400)}
+                        className="absolute top-0 left-0 z-10 h-full px-2 cursor-pointer"
+                    >
+                        <ChevronLeftIcon className="text-white h-10" />
+                    </button>
+
+                    <div ref={scrollRef} className="relative flex overflow-x-auto space-x-4 no-scrollbar scroll-smooth">
+                        {videoIds.map(video => {
+                            return (
+                                <VideoThumbnail title={video.title} description={video.description} videoId={video.videoId} />
+                            )
+                        })}
                     </div>
+
+                    <button
+                        onClick={() => scroll(400)}
+                        className="absolute top-0 right-0 z-10 h-full px-2 cursor-pointer"
+                    >
+                        <ChevronRightIcon className="text-white h-10" />
+                    </button>
+                </div>
+            </div>
+
+            {/* Music*/}
+            <div className="bg-black py-8">
+                <h2 className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-3xl font-bold text-white mb-8">Music</h2>
+                <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <button
+                        onClick={() => scroll(-400)}
+                        className="absolute top-0 left-0 z-10 h-full px-2 cursor-pointer"
+                    >
+                        <ChevronLeftIcon className="text-white h-10" />
+                    </button>
+
+                    <div ref={scrollRef} className="relative flex overflow-x-auto space-x-4 no-scrollbar scroll-smooth">
+                        {videoIds.map(video => {
+                            return (
+                                <VideoThumbnail title={video.title} description={video.description} videoId={video.videoId} />
+                            )
+                        })}
+                    </div>
+
+                    <button
+                        onClick={() => scroll(400)}
+                        className="absolute top-0 right-0 z-10 h-full px-2 cursor-pointer"
+                    >
+                        <ChevronRightIcon className="text-white h-10" />
+                    </button>
                 </div>
             </div>
         </div>

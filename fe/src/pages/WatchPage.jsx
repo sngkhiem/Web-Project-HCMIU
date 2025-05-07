@@ -4,8 +4,10 @@ import { Link, useParams } from "react-router-dom";
 import { useVideoStore } from '../stores/useVideoStore';
 
 import Sidebar from '../components/Sidebar';
-import { ChevronDownIcon, ListBulletIcon } from '@heroicons/react/24/solid';
+import { StarIcon, ChevronDownIcon, ListBulletIcon } from '@heroicons/react/24/solid';
 import { HeartIcon, HandThumbUpIcon, HandThumbDownIcon } from '@heroicons/react/24/outline';
+
+import VideoRating from "../components/VideoRating"
 
 const WatchPage = () => {
     const { id } = useParams(); // Get video ID from URL
@@ -21,34 +23,47 @@ const WatchPage = () => {
 
     console.log("Video is " + video)
 
+    const handleRating = (value) => {
+        console.log('Rated:', value);
+        // Here you can save to backend or localStorage
+    };
+
     const handleSubmitComment = (e) => {
         e.preventDefault();
     }
 
     return (
         <div className="" >
-            <div className="flex">
-                <div className="relative flex flex-col flex-1 gap-y-5 px-24 py-12 bg-black">               
+            <div className="lg:flex">
+                <div className="relative flex flex-col flex-1 gap-y-5 px-3 lg:px-24 py-12 bg-black">               
                     {/* Content */}
-                    <div>
-                        <iframe width="960" height="540" src={`https://youtube.com/embed/${id}`} title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    <div className="relative w-full pb-[56.25%] h-0">
+                        <iframe className="absolute top-0 left-0 w-full h-full rounded-lg" src={`https://youtube.com/embed/${id}`} title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                     </div>
 
                     <div className="flex flex-col gap-4">
                         <h1 className="text-2xl font-semibold text-white">Highlights 180p</h1>
-                        <div className="flex justify-between">
+                        <div className="flex items-center justify-between">
                             {/* Video Interactions */}
-                            <div className="flex gap-2">
+                            <div className="flex items-center gap-2">
                                 <button className="p-3 bg-primary-gray hover:bg-purple-700 transition-colors rounded-lg cursor-pointer">
                                     <HeartIcon className="h-5 text-white"/>
                                 </button>
+
                                 <button className="p-3 bg-primary-gray hover:bg-purple-700 transition-colors rounded-lg cursor-pointer">
                                     <ListBulletIcon className="h-5 text-white"/>
                                 </button>
+
+                                <VideoRating onRate={handleRating} />
                             </div>
 
                             {/* View Count */}
-                            <span className="text-lg text-white">10,000,000 Views</span>
+                            <div className="flex flex-col">
+                                <span className="text-lg text-white">10,000,000 Views</span>
+                                <span className="flex gap-2 text-lg text-white">
+                                    <StarIcon className="w-5" />
+                                    4.7 (100 Ratings)</span>
+                            </div>
                         </div>
                     </div>
 

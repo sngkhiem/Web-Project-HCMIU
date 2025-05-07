@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { StarIcon } from '@heroicons/react/24/solid';
+
 const videoIds = [
     {
         id: 1,
@@ -47,13 +49,18 @@ const videoIds = [
 
 const Sidebar = () => {
     return (
-        <div className="w-md bg-black text-white pr-24 py-12 overflow-y-auto">
+        <div className="lg:w-md bg-black text-white px-3 lg:pr-24 lg:py-12 overflow-y-auto">
             <ul>
                 {videoIds.map((video) => (
                     <li key={video.id} className="flex space-x-3 hover:bg-primary-gray p-2 cursor-pointer">
                         <img src={`https://img.youtube.com/vi/${video.videoId}/0.jpg`} alt={video.title} className="w-[168px] h-[94px] object-cover flex-shrink-0 rounded-lg" />
                         <div>
                             <span className="text-md font-semibold line-clamp-2">{video.title}</span>
+                            <span className="text-sm text-gray-400">1,000,000 Views</span>
+                            <div className="flex gap-2">
+                                <StarIcon className="w-3" />
+                                <span className="text-sm text-gray-400">5.0</span>
+                            </div>
                         </div>
                     </li>
                 ))}

@@ -5,6 +5,8 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import LoadingSpinner from "./components/LoadingSpinner"
 
+import ScrollToTop from "./components/ScrollToTop"
+
 import HomePage from "./pages/HomePage"
 import LogInPage from "./pages/LogInPage"
 import SignUpPage from "./pages/SignUpPage"
@@ -26,6 +28,7 @@ const App = () => {
     
     return (
         <div class="font-outfit">
+            <ScrollToTop />
             <div className="bg-black sticky top-0 z-40">
                 <Navbar />
             </div>
@@ -38,7 +41,7 @@ const App = () => {
                 
                 <Route path="/browse" element={<BrowsePage />} />
                 <Route path="/watch/:id" element={<WatchPage />} />
-                <Route path="/search/:keyword" element={<SearchPage />} />
+                <Route path="/search" element={<SearchPage />} />
 
                 <Route path="/profile" element={user ? <ProfilePage /> : <Navigate to="/" />} />
             </Routes>

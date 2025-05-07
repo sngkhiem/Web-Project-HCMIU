@@ -120,7 +120,8 @@ const HomePage = () => {
                         <p className="text-md sm:text-lg text-gray-300 mb-6">
                             Ready to watch? Enter your email to create a new account.
                         </p>
-                        <div className="flex justify-center gap-3">
+
+                        <div className="flex flex-col lg:flex-row justify-center gap-3">
                             <input
                                 type="email"
                                 placeholder="Email"
@@ -145,7 +146,7 @@ const HomePage = () => {
                 <h2 className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-3xl font-bold text-white mb-8">Trending Now</h2>
                 <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <button
-                        onClick={() => scroll(-900)}
+                        onClick={() => scroll(-400)}
                         className="absolute top-0 left-0 z-10 h-full px-2 cursor-pointer"
                     >
                         <ChevronLeftIcon className="text-white h-10" />
@@ -160,7 +161,7 @@ const HomePage = () => {
                     </div>
 
                     <button
-                        onClick={() => scroll(900)}
+                        onClick={() => scroll(400)}
                         className="absolute top-0 right-0 z-10 h-full px-2 cursor-pointer"
                     >
                         <ChevronRightIcon className="text-white h-10" />
