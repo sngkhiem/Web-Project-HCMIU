@@ -3,6 +3,7 @@ import { Navigate, Routes, Route } from "react-router-dom"
 
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import LoadingSpinner from "./components/LoadingSpinner"
 
 import HomePage from "./pages/HomePage"
 import LogInPage from "./pages/LogInPage"
@@ -10,8 +11,7 @@ import SignUpPage from "./pages/SignUpPage"
 import BrowsePage from "./pages/BrowsePage"
 import WatchPage from "./pages/WatchPage"
 import ProfilePage from './pages/ProfilePage';
-
-import LoadingSpinner from "./components/LoadingSpinner"
+import SearchPage from './pages/SearchPage';
 
 import { useUserStore } from "./stores/useUserStore"
 
@@ -38,6 +38,7 @@ const App = () => {
                 
                 <Route path="/browse" element={<BrowsePage />} />
                 <Route path="/watch/:id" element={<WatchPage />} />
+                <Route path="/search/:keyword" element={<SearchPage />} />
 
                 <Route path="/profile" element={user ? <ProfilePage /> : <Navigate to="/" />} />
             </Routes>

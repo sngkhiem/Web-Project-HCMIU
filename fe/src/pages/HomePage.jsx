@@ -41,6 +41,18 @@ const videoIds = [
         title: "HIEUTHUHAI - TRÌNH (prod. by Kewtiie)",
         description: "Music video of TRÌNH",
         videoId: "7kO_ALcwNAw"
+    },
+    {
+        id: 6,
+        title: "THANHDRAW - IDOOMYTHANG // Official Music Video",
+        description: "Music video of IDOOMYTHANG",
+        videoId: "rAJnKTZAGsU"
+    },
+    {
+        id: 7,
+        title: "HIEUTHUHAI - Không Thể Say (prod. by Kewtiie) [Official Lyric Video]",
+        description: "Music video of Không Thể Say",
+        videoId: "d6pgocXnK8U"
     }
 ];
 

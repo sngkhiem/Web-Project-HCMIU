@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
-import { Link } from 'react-router-dom'
 import { useVideoStore } from '../stores/useVideoStore';
+
+import Sidebar from '../components/Sidebar';
+import { HeartIcon } from '@heroicons/react/24/outline';
 
 const WatchPage = () => {
     const { id } = useParams(); // Get video ID from URL
@@ -17,24 +19,32 @@ const WatchPage = () => {
     console.log("Video is " + video)
 
     return (
-        <div>
-            <div className="relative flex items-center justify-center py-12 bg-black">
-                {/* Dark overlay */}
-                <div className="absolute inset-0 bg-black/60 z-10"></div>
-                
-                {/* Background image */}
-                <div 
-                    className="absolute inset-0 bg-[url('/assets/hero.jpg')] bg-cover bg-center"
-                    style={{
-                        backgroundImage: "linear-gradient(to bottom, rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('/assets/hero.jpg')"
-                    }}
-                ></div>
+        <div className="" >
+            <div className="flex">
+                <div className="relative flex flex-col flex-1 gap-y-5 px-24 py-12 bg-black">               
+                    {/* Content */}
+                    <div>
+                        <iframe width="960" height="540" src={`https://youtube.com/embed/${id}`} title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    </div>
 
-                {/* Content */}
-                <div className="relative z-20 flex items-center justify-center w-full">
-                    <iframe width="1120" height="630" src={`https://youtube.com/embed/${id}`} title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    <div className="flex flex-col gap-4">
+                        <h1 className="text-2xl font-semibold text-white">Highlights 180p</h1>
+                        <div className="flex justify-between">
+                            <button className="p-3 bg-primary-gray hover:bg-purple-700 transition-colors rounded-lg cursor-pointer">
+                                <HeartIcon className="h-5 text-white"/>
+                            </button>
+                            <span className="text-lg text-white">100,000 Views</span>
+                        </div>
+                    </div>
+
+                    <div className="bg-primary-gray rounded-sm p-3">
+                        <p className="text-white">Highlights 180p</p>
+                    </div>
                 </div>
+
+                <Sidebar />
             </div>
+
         </div>
     )
 }
