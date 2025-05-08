@@ -25,12 +25,13 @@ export const useUserStore = create((set) => ({
 		try {
 			const res = await axios.post("http://localhost:8080/api/auth/signin", 
 				{ username, password },
-				{ withCredentials: true }
+				{ withCredentials: true}
 			);
 			const { token, ...userData } = res.data;
 
 			set({
 				user: userData,
+				token: token,
 				loading: false
 			});
 		} catch (error) {
