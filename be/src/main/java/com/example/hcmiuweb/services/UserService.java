@@ -36,4 +36,15 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
+    
+    public User updateUser(User user) {
+        // Don't re-encode password if it's the same as before
+        if (user.getId() != null) {
+            Optional<User> existingUser = userRepository.findById(user.getId());
+            if (existingUser.isPresent() && !existingUser.get().getPassword().equals(user.getPassword())) {
+                user.setPassword(passwordEncoder.encode(user.getPassword()));
+            }
+        }
+        return userRepository.save(user);
+    }
 }
