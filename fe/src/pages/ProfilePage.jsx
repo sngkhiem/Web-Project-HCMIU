@@ -4,7 +4,6 @@ import { useUserStore } from "../stores/useUserStore";
 const ProfilePage = () => {
     const { user, isUpdatingProfile, updateProfile } = useUserStore();
     const [selectedImg, setSelectedImg] = useState(null);
-    console.log(user)
   
     const handleImageUpload = async (e) => {
         const file = e.target.files[0];
@@ -34,7 +33,7 @@ const ProfilePage = () => {
                     <div className="flex flex-col items-center gap-4">
                         <div className="relative">
                             <img
-                                src={selectedImg || user.profilePic || "./assets/avatar.png"}
+                                src={selectedImg || user.avatar || "./assets/avatar.png"}
                                 alt="Profile"
                                 className="size-32 rounded-full object-cover border-4 "
                             />

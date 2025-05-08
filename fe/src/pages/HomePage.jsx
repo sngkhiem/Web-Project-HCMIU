@@ -82,6 +82,8 @@ const HomePage = () => {
     useEffect(() => {
         fetchAllVideos();
     }, [fetchAllVideos]);
+
+    console.log(user)
     
     const scrollRef = useRef(null);
 

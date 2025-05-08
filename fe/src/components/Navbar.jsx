@@ -126,6 +126,10 @@ const Navbar = () => {
                                     </AnimatePresence>
                                 </div>
 
+                                <Link className="bg-purple-700 px-3 py-1 text-white font-semibold hover:bg-purple-600 transition-colors rounded-full">
+                                    + Create Video
+                                </Link>
+
                                 {/* Profile Dropdown */}
                                 <Menu as="div" className="relative ml-3">
                                     <div>
