@@ -1045,6 +1045,80 @@
       ]
     },
     {
+      "name": "File Uploads",
+      "description": "Endpoints for file uploads including avatar images",
+      "item": [
+        {
+          "name": "Upload Avatar (Current User)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": ""
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/uploads/avatar",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "uploads", "avatar"]
+            },
+            "description": "Upload avatar image for the currently authenticated user"
+          },
+          "response": []
+        },
+        {
+          "name": "Upload Avatar (Specific User)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": ""
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/uploads/avatar/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "uploads", "avatar", "1"]
+            },
+            "description": "Upload avatar image for a specific user (admin only, or the user themselves)"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "Test",
       "description": "Test endpoints",
       "item": [
