@@ -28,6 +28,9 @@ public class Video {
 
     @Column(nullable = false)
     private String url;
+    
+    @Column
+    private String thumbnailUrl;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -49,12 +52,13 @@ public class Video {
     // Constructors
     public Video() {}
 
-    public Video(String title, String description, LocalDateTime uploadDate, Integer duration, String url, User uploader, Category category) {
+    public Video(String title, String description, LocalDateTime uploadDate, Integer duration, String url, String thumbnailUrl, User uploader, Category category) {
         this.title = title;
         this.description = description;
         this.uploadDate = uploadDate;
         this.duration = duration;
         this.url = url;
+        this.thumbnailUrl = thumbnailUrl;
         this.uploader = uploader;
         this.category = category;
     }
@@ -100,6 +104,13 @@ public class Video {
     }
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String getThumbnailUrl() {
+        return thumbnailUrl;
+    }
+    public void setThumbnailUrl(String thumbnailUrl) {
+        this.thumbnailUrl = thumbnailUrl;
     }
 
     public User getUploader() {

@@ -8,9 +8,7 @@ This project is a multi-container web application that includes:
   
 
 -  **Backend:** A Spring Boot application that connects to a MySQL
-
 database.
-
   
 
 -  **Frontend:** A Vite/React application served by Nginx.
@@ -25,9 +23,7 @@ database.
 
   
 
-- [Docker](https://www.docker.com/get-started) and [Docker
-
-Compose](https://docs.docker.com/compose/install/) installed on your
+- [Docker](https://www.docker.com/get-started) and [Docker Compose](https://docs.docker.com/compose/install/) installed on your
 
 machine.
 
@@ -72,21 +68,12 @@ The `docker-compose.yml` file defines three services:
 
 directory, exposes port 5173, and depends on the backend.
 
-  
+- **backend**: Build the SpringBoot Application
 
--  **mysql:** Uses the official MySQL 8.0 image. It creates a database
-
-named `db` and a non-root user (`cvip` with password `cvip`). It
-
-maps the container's MySQL port (3306) to host port 3307 and
-
-persists data using a Docker volume.
-
-  
+-  **mysql:** Uses the official MySQL 8.0 image. For privacy, I'm doing the MySQL local, so that just my contributor can access. 
 
 ## Example `docker-compose.yml`
 
-  
 
 ``` {.yaml language="yaml"}
 
@@ -95,36 +82,27 @@ services:
     build: ./fe
     volumes:
       - ./fe:/app
-      - /app/node_modules  # Prevents overwriting container’s node_modules with an empty host folder
+      - /app/node_modules
     ports:
       - "5173:5173"
     command: npm run dev
 
-
-  mysql:
-    image: mysql:8.0
+  backend:
+    build: ./be
     ports:
-      - "3307:3306"
+      - "8080:8080"
     environment:
-      MYSQL_ROOT_PASSWORD: cvip
-      MYSQL_DATABASE: db
-      MYSQL_USER: cvip
-      MYSQL_PASSWORD: cvip
+      - SPRING_DATASOURCE_URL=jdbc:mysql://100.93.79.71:3306/db
+      - SPRING_DATASOURCE_USERNAME=cvip
+      - SPRING_DATASOURCE_PASSWORD=roadtowf
     volumes:
-      - mysql_data:/var/lib/mysql
-      - ./initdb:/docker-entrypoint-initdb.d
-    restart: unless-stopped
-
-volumes:
-  mysql_data:
+      - ./uploaded-videos:/app/videos
 
 ```
 
   
 
-**Note:** The backend connects to MySQL using the hostname `mysql` and
-
-port `3306` (internal). On your host, MySQL is available on port `3307`.
+**Note:** I'm using tailscale for making the IP that connect between remote and local machine.
 
   
 
@@ -134,61 +112,21 @@ port `3306` (internal). On your host, MySQL is available on port `3307`.
 
 ## Build and Start Containers
 
-  
-
-1.  **Build the Backend:**\
-
-From the `be` directory, run:
-
-  
-
-``` {.bash language="bash"}
-
-cd be
-
-mvn clean package
+Everything I have put in the docker, so you just have the docker and run the command line:
 
 ```
-
-  
-
-2.  **Start the Containers:**\
-
-Return to the project root and run:
-
-  
-
-``` {.bash language="bash"}
-
-cd ..
-
 docker-compose up --build
-
 ```
-
-  
-
+ 
 This command will:
 
   
 
-- Build the Docker images for the backend and frontend.
+- Build the Docker images for SQL, backend and frontend.
 
-  
 
-- Create and start containers for the backend, frontend, and
 
-MySQL.
-
-  
-
-- Set up the database with the provided environment variables and
-
-(if available) execute any initialization scripts in the
-
-`initdb` folder.
-
-  
+- Create and start containers for the frontend, backend and MySQL.
 
 ## Access the Application
 
@@ -206,21 +144,8 @@ MySQL.
 
   
 
--  **MySQL:** To connect from your host, run:
+-  **MySQL:** Not available
 
-  
-
-``` {.bash language="bash"}
-
-mysql -h 127.0.0.1 -P 3307 -u cvip -p db
-
-```
-
-  
-
-Then enter the password (`cvip`) when prompted.
-
-  
 
 ## Stop the Application
 
@@ -233,9 +158,7 @@ To stop all running containers, press `Ctrl+C` in the terminal running
   
 
 ``` {.bash language="bash"}
-
 docker-compose  down
-
 ```
 
   

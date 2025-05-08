@@ -1,50 +1,55 @@
-import { useEffect, useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
-import "./App.css";
+import React, { useEffect } from 'react'
+import { Navigate, Routes, Route } from "react-router-dom"
 
-function App() {
-    const [count, setCount] = useState(0);
-    const [message, setMessage] = useState(""); // State for backend message
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
+import LoadingSpinner from "./components/LoadingSpinner"
 
-    useEffect(() => {
-        fetch("http://localhost:8080/api/test")
-            .then(response => response.text()) // If your API returns plain text
-            .then(data => {
-                console.log("Backend Response:", data);
-                setMessage(data); // Save backend response to state
-            })
-            .catch(error => console.error("Error fetching data:", error));
-    }, []);
+import ScrollToTop from "./components/ScrollToTop"
 
+import HomePage from "./pages/HomePage"
+import LogInPage from "./pages/LogInPage"
+import SignUpPage from "./pages/SignUpPage"
+import BrowsePage from "./pages/BrowsePage"
+import WatchPage from "./pages/WatchPage"
+import ProfilePage from './pages/ProfilePage';
+import SearchPage from './pages/SearchPage';
+
+import { useUserStore } from "./stores/useUserStore"
+
+const App = () => {
+    const { user, checkAuth, checkingAuth } = useUserStore();
+
+	useEffect(() => {
+		checkAuth();
+	}, [checkAuth]);
+
+	if (checkingAuth) return <LoadingSpinner />;
+    
     return (
-        <>
-            <div>
-                <a href="https://google.com" target="_blank">
-                    <img src={viteLogo} className="logo" alt="Vite logo" />
-                </a>
-                <a href="https://react.dev" target="_blank">
-                    <img src={reactLogo} className="logo react" alt="React logo" />
-                </a>
+        <div class="font-outfit">
+            <ScrollToTop />
+            <div className="bg-black sticky top-0 z-40">
+                <Navbar />
             </div>
-            <h1>Vite + T</h1>
-            <div className="card">
-                <button onClick={() => setCount((count) => count + 1)}>
-                    Count is {count}
-                </button>
-                <p>Edit <code>src/App.jsx</code> and save to test HMR</p>
-            </div>
-            <p className="read-the-docs">
-                Click on the Vite and React logos to learn more
-            </p>
+    
+            <Routes>
+                <Route path="/" element={<HomePage />} />
 
-            {/* Display Backend Message */}
-            <div className="backend-message">
-                <h2>Backend Response:</h2>
-                <p>{message ? message : "Fetching data..."}</p>
-            </div>
-        </>
-    );
+                <Route path='/signup' element={!user ? <SignUpPage /> : <Navigate to='/' />} />
+                <Route path='/login' element={!user ? <LogInPage /> : <Navigate to='/' />} />
+                
+                <Route path="/browse" element={<BrowsePage />} />
+                <Route path="/watch/:id" element={<WatchPage />} />
+                <Route path="/search" element={<SearchPage />} />
+
+                <Route path="/profile" element={user ? <ProfilePage /> : <Navigate to="/" />} />
+            </Routes>
+    
+            <Footer />
+
+        </div>
+    )
 }
 
-export default App;
+export default App
