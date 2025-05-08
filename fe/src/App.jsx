@@ -20,32 +20,32 @@ import { useUserStore } from "./stores/useUserStore"
 const App = () => {
     const { user, checkAuth, checkingAuth } = useUserStore();
 
-	useEffect(() => {
-		checkAuth();
-	}, [checkAuth]);
+    useEffect(() => {
+        checkAuth();
+    }, [checkAuth]);
 
-	if (checkingAuth) return <LoadingSpinner />;
-    
+    if (checkingAuth) return <LoadingSpinner />;
+
     return (
         <div class="font-outfit">
             <ScrollToTop />
             <div className="bg-black sticky top-0 z-40">
                 <Navbar />
             </div>
-    
+
             <Routes>
                 <Route path="/" element={<HomePage />} />
 
                 <Route path='/signup' element={!user ? <SignUpPage /> : <Navigate to='/' />} />
                 <Route path='/login' element={!user ? <LogInPage /> : <Navigate to='/' />} />
-                
+
                 <Route path="/browse" element={<BrowsePage />} />
                 <Route path="/watch/:id" element={<WatchPage />} />
                 <Route path="/search" element={<SearchPage />} />
 
                 <Route path="/profile" element={user ? <ProfilePage /> : <Navigate to="/" />} />
             </Routes>
-    
+
             <Footer />
 
         </div>

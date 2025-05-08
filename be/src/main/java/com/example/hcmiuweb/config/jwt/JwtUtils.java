@@ -67,4 +67,19 @@ public class JwtUtils {
         }
         return false;
     }
+
+    public String generateTokenFromUsername(String username) {
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + jwtExpirationMs);
+
+        return Jwts.builder()
+                .setSubject(username)
+                .setIssuedAt(now)
+                .setExpiration(expiryDate)
+                .signWith(
+                        Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8)),
+                        SignatureAlgorithm.HS512
+                )
+                .compact();
+    }
 }
