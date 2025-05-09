@@ -48,7 +48,7 @@ const videoIds = [
     }
 ];
 
-const VideoSection = () => {
+const VideoSection = ({name}) => {
     const scrollRef = useRef(null);
 
     const scroll = (offset) => {
@@ -58,8 +58,10 @@ const VideoSection = () => {
     };
 
     return (
-        <div className="bg-black py-16">
-            <h2 className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-3xl font-bold text-white mb-4">Popular Music</h2>
+        <div className="bg-black py-8">
+            <h2 className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-3xl font-bold text-white mb-4">
+                {name}
+            </h2>
             <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <button
                     onClick={() => scroll(-400)}

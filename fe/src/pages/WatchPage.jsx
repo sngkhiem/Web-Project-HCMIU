@@ -4,10 +4,38 @@ import { Link, useParams } from "react-router-dom";
 import { useVideoStore } from '../stores/useVideoStore';
 
 import Sidebar from '../components/Sidebar';
-import { StarIcon, ChevronDownIcon, ListBulletIcon } from '@heroicons/react/24/solid';
-import { HeartIcon, HandThumbUpIcon, HandThumbDownIcon } from '@heroicons/react/24/outline';
-
 import VideoRating from "../components/VideoRating"
+import { StarIcon, ChevronUpIcon } from '@heroicons/react/24/solid';
+import { BookmarkIcon, HandThumbUpIcon, HandThumbDownIcon } from '@heroicons/react/24/outline';
+
+const comments = [
+    {
+        id: 1,
+        username: "Diego Clark",
+        avatar: "https://static.vecteezy.com/system/resources/thumbnails/005/346/410/small/close-up-portrait-of-smiling-handsome-young-caucasian-man-face-looking-at-camera-on-isolated-light-gray-studio-background-photo.jpg",
+        content: "Amazing song!",
+        date: "2025-05-07",
+        likes: "5",
+        replies: [
+            {
+                id: 1,
+                username: "Maxwell Hart",
+                avatar: "https://www.shutterstock.com/image-photo/head-shot-portrait-close-smiling-600nw-1714666150.jpg",
+                content: "Real",
+                date: "2025-05-07",
+                likes: "2"
+            },
+            {
+                id: 2,
+                username: "Safa Webster",
+                avatar: "https://media.istockphoto.com/id/1388253782/photo/positive-successful-millennial-business-professional-man-head-shot-portrait.jpg?s=612x612&w=0&k=20&c=uS4knmZ88zNA_OjNaE_JCRuq9qn3ycgtHKDKdJSnGdY=",
+                content: "Same here!",
+                date: "2025-05-07",
+                likes: "1"
+            }
+        ]
+    }
+]
 
 const WatchPage = () => {
     const { id } = useParams(); // Get video ID from URL
@@ -42,16 +70,12 @@ const WatchPage = () => {
                     </div>
 
                     <div className="flex flex-col gap-4">
-                        <h1 className="text-2xl font-semibold text-white">Highlights 180p</h1>
+                        <h1 className="text-2xl font-semibold text-white">Music Video</h1>
                         <div className="flex items-center justify-between">
                             {/* Video Interactions */}
                             <div className="flex items-center gap-2">
                                 <button className="p-3 bg-primary-gray hover:bg-purple-700 transition-colors rounded-lg cursor-pointer">
-                                    <HeartIcon className="h-5 text-white"/>
-                                </button>
-
-                                <button className="p-3 bg-primary-gray hover:bg-purple-700 transition-colors rounded-lg cursor-pointer">
-                                    <ListBulletIcon className="h-5 text-white"/>
+                                    <BookmarkIcon className="h-5 text-white"/>
                                 </button>
 
                                 <VideoRating onRate={handleRating} />
@@ -62,7 +86,7 @@ const WatchPage = () => {
                                 <span className="text-lg text-white">10,000,000 Views</span>
                                 <span className="flex gap-2 text-lg text-white">
                                     <StarIcon className="w-5" />
-                                    4.7 (100 Ratings)</span>
+                                    4.8 (100 Ratings)</span>
                             </div>
                         </div>
                     </div>
@@ -79,12 +103,12 @@ const WatchPage = () => {
                             </div>
                         </div>
 
-                        <p className="mt-2 text-white">Highlights 180p</p>
+                        <p className="mt-2 text-white">Music video.</p>
                     </div>
 
                     <div className="flex flex-col gap-4">
                         <div className="flex justify-between items-center">
-                            <span className="text-white text-lg font-semibold">10,000 Comments</span>
+                            <span className="text-white text-lg font-semibold">{comments.length} Comments</span>
                         </div>
 
                         <div>
@@ -110,49 +134,97 @@ const WatchPage = () => {
                             </form>
                         </div>
 
-                        <div className="py-2 flex gap-5">
-                            <img src="https://media.istockphoto.com/id/1437816897/photo/business-woman-manager-or-human-resources-portrait-for-career-success-company-we-are-hiring.jpg?s=612x612&w=0&k=20&c=tyLvtzutRh22j9GqSGI33Z4HpIwv9vL_MZw_xOE19NQ=" alt="" className="h-12 w-12 object-cover rounded-full" />
-
-                            <div className="flex flex-col gap-2">
-                                {/* User Details */}
-                                <div className="flex gap-3 items-center">
-                                    <h3 className="text-md font-semibold text-white">Bryan Burnett</h3>
-                                    <span className="text-md text-gray-700">2025-05-07</span>
-                                </div>
-
-                                {/* Comment */}
-                                <p className="text-md text-white">Nice video, I like it</p>
-
-                                {/* Comment Interactions */}
-                                <div className="flex items-center gap-3">
-                                    {/* Like Button */}
-                                    <div className="flex gap-2">
-                                        <button className="cursor-pointer">
-                                            <HandThumbUpIcon className="text-white w-5" />
+                        {comments.map((comment) => {
+                            return (
+                                <div className="py-2 flex gap-5">
+                                    <img src={comment.avatar} alt="" className="h-12 w-12 object-cover rounded-full" />
+        
+                                    <div className="flex flex-col gap-1">
+                                        {/* User Details */}
+                                        <div className="flex gap-3 items-center">
+                                            <h3 className="text-md font-semibold text-white">{comment.username}</h3>
+                                            <span className="text-md text-gray-700">{comment.date}</span>
+                                        </div>
+        
+                                        {/* Comment */}
+                                        <p className="text-md text-white">{comment.content}</p>
+        
+                                        {/* Comment Interactions */}
+                                        <div className="flex items-center gap-3 mt-1">
+                                            {/* Like Button */}
+                                            <div className="flex gap-2">
+                                                <button className="cursor-pointer">
+                                                    <HandThumbUpIcon className="text-white w-5" />
+                                                </button>
+                                                <span className="text-white">{comment.likes}</span>
+                                            </div>
+        
+                                            {/* Dislike Button */}
+                                            <div className="flex gap-2">
+                                                <button className="cursor-pointer">
+                                                    <HandThumbDownIcon className="text-white w-5" />
+                                                </button>
+                                            </div>
+        
+                                            {/* Reply Button */}
+                                            <button className="px-3 py-1 text-sm font-semibold text-white hover:bg-primary-gray rounded-lg cursor-pointer">
+                                                Reply
+                                            </button>
+                                        </div>
+        
+                                        {/* Number of Replies */}
+                                        <button className="px-2 py-1 my-2 flex w-fit items-center justify-center gap-2 hover:bg-blue-100 rounded-full transition-colors cursor-pointer">
+                                            <ChevronUpIcon className="h-5 text-blue-400" />
+                                            <span className="text-blue-400">{comment.replies.length} Replies</span>
                                         </button>
-                                        <span className="text-white">500</span>
-                                    </div>
 
-                                    {/* Dislike Button */}
-                                    <div className="flex gap-2">
-                                        <button className="cursor-pointer">
-                                            <HandThumbDownIcon className="text-white w-5" />
-                                        </button>
+                                        <div className="flex flex-col gap-2">
+                                            {comment.replies.map((reply) => {
+                                                return (
+                                                    <div className="py-1 flex gap-5">
+                                                        <img src={reply.avatar} alt={reply.username} className="h-12 w-12 object-cover rounded-full" />
+                            
+                                                        <div className="flex flex-col gap-1">
+                                                            {/* User Details */}
+                                                            <div className="flex gap-3 items-center">
+                                                                <h3 className="text-md font-semibold text-white">{reply.username}</h3>
+                                                                <span className="text-md text-gray-700">{reply.date}</span>
+                                                            </div>
+                            
+                                                            {/* Comment */}
+                                                            <p className="text-md text-white">{reply.content}</p>
+                            
+                                                            {/* Comment Interactions */}
+                                                            <div className="flex items-center gap-3 mt-1">
+                                                                {/* Like Button */}
+                                                                <div className="flex gap-2">
+                                                                    <button className="cursor-pointer">
+                                                                        <HandThumbUpIcon className="text-white w-5" />
+                                                                    </button>
+                                                                    <span className="text-white">{reply.likes}</span>
+                                                                </div>
+                            
+                                                                {/* Dislike Button */}
+                                                                <div className="flex gap-2">
+                                                                    <button className="cursor-pointer">
+                                                                        <HandThumbDownIcon className="text-white w-5" />
+                                                                    </button>
+                                                                </div>
+                            
+                                                                {/* Reply Button */}
+                                                                <button className="px-3 py-1 text-sm font-semibold text-white hover:bg-primary-gray rounded-lg cursor-pointer">
+                                                                    Reply
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                )})}
+                                            </div>
                                     </div>
-
-                                    {/* Reply Button */}
-                                    <button className="px-3 py-1 text-sm font-semibold text-white hover:bg-primary-gray rounded-lg cursor-pointer">
-                                        Reply
-                                    </button>
                                 </div>
+                            )
+                        })}
 
-                                {/* Number of Replies */}
-                                <button className="px-2 py-1 flex w-fit items-center justify-center gap-2 hover:bg-blue-100 rounded-full transition-colors cursor-pointer">
-                                    <ChevronDownIcon className="h-5 text-blue-400" />
-                                    <span className="text-blue-400">250 Replies</span>
-                                </button>
-                            </div>
-                        </div>
                     </div>
                 </div>
 

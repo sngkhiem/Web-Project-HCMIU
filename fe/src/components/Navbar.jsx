@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import SearchCard from './SearchCard'
 
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
-import { Bars3Icon, BellIcon, XMarkIcon, ShoppingCartIcon } from '@heroicons/react/24/outline';
+import { BookmarkIcon, Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 
 import { useUserStore } from "../stores/useUserStore";
 
@@ -108,6 +108,16 @@ const Navbar = () => {
                                         )}
                                     </AnimatePresence>
                                 </div>
+
+                                {/* Notifications */}
+                                <Link
+                                    to="#"
+                                    className="relative rounded-full bg-primary-text p-1 text-gray-400 hover:text-white focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 focus:outline-hidden"
+                                >
+                                    <span className="absolute -inset-1.5" />
+                                    <span className="sr-only">View notifications</span>
+                                    <BookmarkIcon aria-hidden="true" className="size-6" />
+                                </Link>
 
                                 {/* Profile Dropdown */}
                                 <Menu as="div" className="relative ml-3">

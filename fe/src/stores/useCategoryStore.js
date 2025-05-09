@@ -25,8 +25,8 @@ export const useCategoryStore = create((set) => ({
 	fetchAllCategories: async () => {
 		set({ loading: true });
 		try {
-			const response = await axios.get("/categories");
-			set({ categories: response.data.categories, loading: false });
+			const res = await axios.get("/categories");
+			set({ categories: res.data, loading: false });
 		} catch (error) {
 			set({ error: "Failed to fetch categories", loading: false });
 			toast.error(error.response.data.error || "Failed to fetch categories");
@@ -38,7 +38,7 @@ export const useCategoryStore = create((set) => ({
 		try {
 			await axios.delete(`/categories/${categoryId}`);
 			set((prevCategories) => ({
-				categories: prevCategories.categories.filter((category) => category._id !== categoryId),
+				categories: prevCategories.categories.filter((category) => category.category_id !== categoryId),
 				loading: false,
 			}));
 		} catch (error) {

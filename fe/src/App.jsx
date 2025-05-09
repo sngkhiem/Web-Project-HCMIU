@@ -12,6 +12,7 @@ import LogInPage from "./pages/LogInPage"
 import SignUpPage from "./pages/SignUpPage"
 import WatchPage from "./pages/WatchPage"
 import ProfilePage from './pages/ProfilePage';
+import WatchListPage from './pages/WatchListPage';
 import SearchPage from './pages/SearchPage';
 
 import { useUserStore } from "./stores/useUserStore"
@@ -43,6 +44,7 @@ const App = () => {
                 <Route path="/search" element={<SearchPage />} />
 
                 <Route path="/profile" element={user ? <ProfilePage /> : <Navigate to="/" />} />
+                <Route path="/watchlist" element={user ? <WatchListPage /> : <Navigate to="/" />} />
             </Routes>
 
             <Footer />
