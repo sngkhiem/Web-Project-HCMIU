@@ -9,28 +9,6 @@ const SearchCard = ({
 }) => {
   return (
     <div className="w-full max-w-2xl bg-white rounded-lg shadow-lg p-6">
-      {/* Suggested Movies Section */}
-      <div className="mb-6">
-        <h2 className="text-xl font-semibold text-gray-800 mb-4">Suggested Movies</h2>
-        <div className="flex space-x-4 overflow-x-auto pb-4">
-          {suggestedMovies.map((movie) => (
-            <div
-              key={movie.id}
-              className="flex-none w-48 cursor-pointer hover:bg-gray-50 p-2 rounded-lg transition-colors"
-              onClick={() => onMovieClick(movie)}
-            >
-              <img
-                src={movie.poster}
-                alt={movie.title}
-                className="w-full h-64 object-cover rounded-md mb-2"
-              />
-              <p className="text-sm font-medium text-gray-700 truncate">{movie.title}</p>
-              <p className="text-xs text-gray-500">{movie.year}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
       {/* Recent Searches Section */}
       <div>
         <h2 className="text-xl font-semibold text-gray-800 mb-4">Recent Searches</h2>

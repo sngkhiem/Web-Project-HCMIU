@@ -3,14 +3,13 @@ import { Navigate, Routes, Route } from "react-router-dom"
 
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import ScrollToTop from "./components/ScrollToTop"
 import LoadingSpinner from "./components/LoadingSpinner"
 
-import ScrollToTop from "./components/ScrollToTop"
-
 import HomePage from "./pages/HomePage"
+import HomePageAuth from './pages/HomePageAuth'
 import LogInPage from "./pages/LogInPage"
 import SignUpPage from "./pages/SignUpPage"
-import BrowsePage from "./pages/BrowsePage"
 import WatchPage from "./pages/WatchPage"
 import ProfilePage from './pages/ProfilePage';
 import SearchPage from './pages/SearchPage';
@@ -27,19 +26,19 @@ const App = () => {
     if (checkingAuth) return <LoadingSpinner />;
 
     return (
-        <div class="font-outfit">
+        <div className="font-outfit">
             <ScrollToTop />
+
             <div className="bg-black sticky top-0 z-40">
                 <Navbar />
             </div>
 
             <Routes>
-                <Route path="/" element={<HomePage />} />
+                <Route path="/" element={user ? <HomePageAuth /> : <HomePage />} />
 
                 <Route path='/signup' element={!user ? <SignUpPage /> : <Navigate to='/' />} />
                 <Route path='/login' element={!user ? <LogInPage /> : <Navigate to='/' />} />
 
-                <Route path="/browse" element={<BrowsePage />} />
                 <Route path="/watch/:id" element={<WatchPage />} />
                 <Route path="/search" element={<SearchPage />} />
 
@@ -47,7 +46,6 @@ const App = () => {
             </Routes>
 
             <Footer />
-
         </div>
     )
 }

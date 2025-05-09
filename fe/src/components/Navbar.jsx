@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import SearchCard from './SearchCard'
 
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
+import { Bars3Icon, BellIcon, XMarkIcon, ShoppingCartIcon } from '@heroicons/react/24/outline';
 
 import { useUserStore } from "../stores/useUserStore";
 
@@ -13,28 +14,6 @@ const Navbar = () => {
     const searchRef = useRef(null)
 
     const { user, logout } = useUserStore();
-
-    // Mock data for demonstration
-    const suggestedMovies = [
-        {
-            id: 1,
-            title: "Inception",
-            year: "2010",
-            poster: "https://image.tmdb.org/t/p/w500/9gk7adHYeDvHkCSEqAvQNLV5Uge.jpg"
-        },
-        {
-            id: 2,
-            title: "The Dark Knight",
-            year: "2008",
-            poster: "https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg"
-        },
-        {
-            id: 3,
-            title: "Interstellar",
-            year: "2014",
-            poster: "https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg"
-        }
-    ]
 
     const recentSearches = ["action movies", "sci-fi", "christopher nolan"]
 
@@ -65,9 +44,19 @@ const Navbar = () => {
     }
 
     return (
-        <div>
+        <Disclosure as="nav" className="shadow-sm">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div className="relative flex h-16 items-center justify-between">
+                <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
+                        {/* Mobile menu button*/}
+                        <DisclosureButton className="group relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-primary-text hover:text-white focus:ring-2 focus:ring-white focus:outline-hidden focus:ring-inset">
+                            <span className="absolute -inset-0.5" />
+                            <span className="sr-only">Open main menu</span>
+                            <Bars3Icon aria-hidden="true" className="block size-6 group-data-open:hidden" />
+                            <XMarkIcon aria-hidden="true" className="hidden size-6 group-data-open:block" />
+                        </DisclosureButton>
+                    </div>
+
                     {/* Logo */}
                     <div className="flex flex-1 items-center justify-center sm:justify-start">
                         <div className="flex shrink-0 items-center">
@@ -77,11 +66,6 @@ const Navbar = () => {
                                     src="../assets/logo.png"
                                     className="h-16 w-auto"
                                 />
-                            </Link>
-                        </div>
-                        <div>
-                            <Link to="/browse" className="font-semibold text-white px-4 py-2">
-                                Browse
                             </Link>
                         </div>
                     </div>
@@ -97,7 +81,7 @@ const Navbar = () => {
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
                                         onFocus={() => setIsSearchFocused(true)}
-                                        className="w-64 px-4 py-2 rounded-full border border-gray-300 text-white focus:outline-none focus:border-purple-500"
+                                        className="hidden md:block w-64 px-4 py-2 rounded-full border border-gray-300 text-white focus:outline-none focus:border-purple-500"
                                     />
                                     <Link to="/search" className="absolute right-3 top-1/2 -translate-y-1/2">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-gray-500">
@@ -116,7 +100,6 @@ const Navbar = () => {
                                                 className="absolute top-full left-0 mt-2 w-full z-50"
                                             >
                                                 <SearchCard
-                                                    suggestedMovies={suggestedMovies}
                                                     recentSearches={recentSearches}
                                                     onMovieClick={handleMovieClick}
                                                     onRecentSearchClick={handleRecentSearchClick}
@@ -126,19 +109,15 @@ const Navbar = () => {
                                     </AnimatePresence>
                                 </div>
 
-                                <Link className="bg-purple-700 px-3 py-1 text-white font-semibold hover:bg-purple-600 transition-colors rounded-full">
-                                    + Create Video
-                                </Link>
-
                                 {/* Profile Dropdown */}
                                 <Menu as="div" className="relative ml-3">
                                     <div>
-                                        <MenuButton className="relative flex rounded-full bg-gray-800 text-sm focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 focus:outline-hidden">
+                                        <MenuButton className="relative flex rounded-full bg-gray-800 text-sm focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 focus:outline-hidden cursor-pointer">
                                             <span className="absolute -inset-1.5" />
                                             <span className="sr-only">Open user menu</span>
                                             <img
                                                 alt=""
-                                                src={user.avatar}
+                                                src={user.avatar || "./assets/avatar.png"}
                                                 className="size-8 rounded-full"
                                             />
                                         </MenuButton>
@@ -158,7 +137,7 @@ const Navbar = () => {
                                         </MenuItem>
                                         <MenuItem>
                                             <button
-                                                className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
+                                                className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden cursor-pointer"
                                                 onClick={logout}
                                             >
                                                 Log Out
@@ -170,7 +149,7 @@ const Navbar = () => {
                         ) : (
                             <>
                             <Link to="/login">
-                                <button className="bg-primary-text px-5 py-2 rounded-xl text-white flex items-center gap-2 hover:opacity-70 transition-opacity">
+                                <button className="bg-pm-purple px-5 py-2 rounded-xl text-white flex items-center gap-2 hover:bg-pm-purple-hover transition-colors cursor-pointer">
                                     Log in 
                                 </button> 
                             </Link>
@@ -180,7 +159,7 @@ const Navbar = () => {
                     </div>
                 </div>
             </div>
-        </div>
+        </Disclosure>
     )
 }
 

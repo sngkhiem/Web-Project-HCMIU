@@ -1,9 +1,11 @@
 import { create } from "zustand";
 import axios from "axios";
 import { toast } from "react-hot-toast";
+import Cookies from 'js-cookie';
 
 export const useUserStore = create((set) => ({
 	user: null,
+	token: Cookies.get('jwt'),
 	loading: false,
 	checkingAuth: false,
 	isUpdatingProfile: false,
@@ -31,7 +33,6 @@ export const useUserStore = create((set) => ({
 
 			set({
 				user: userData,
-				token: token,
 				loading: false
 			});
 		} catch (error) {
@@ -52,8 +53,13 @@ export const useUserStore = create((set) => ({
 	updateProfile: async (data) => {
 		set({ isUpdatingProfile: true });
 		try {
-			const res = await axios.put("http://localhost:8080/api/users/update-profile", 
+			const res = await axios.put("http://localhost:8080/api/uploads/avatar", 
 				data,
+				{
+					headers: {
+						Authorization: `Bearer ${token}`,
+					}
+				},
 				{ withCredentials: true }
 			);
 			set({ user: res.data });
