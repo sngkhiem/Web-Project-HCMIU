@@ -1,9 +1,11 @@
 import { create } from "zustand";
 import axios from "axios";
 import { toast } from "react-hot-toast";
+import Cookies from 'js-cookie';
 
 export const useUserStore = create((set) => ({
 	user: null,
+	token: null,
 	loading: false,
 	checkingAuth: false,
 	isUpdatingProfile: false,
@@ -25,12 +27,15 @@ export const useUserStore = create((set) => ({
 		try {
 			const res = await axios.post("http://localhost:8080/api/auth/signin", 
 				{ username, password },
-				{ withCredentials: true }
+				{ withCredentials: true}
 			);
-			const { token, ...userData } = res.data;
+
+			const { ...userData } = res.data;
+			const jwtToken = Cookies.get("jwt");
 
 			set({
 				user: userData,
+				token: jwtToken,
 				loading: false
 			});
 		} catch (error) {
@@ -51,8 +56,14 @@ export const useUserStore = create((set) => ({
 	updateProfile: async (data) => {
 		set({ isUpdatingProfile: true });
 		try {
-			const res = await axios.put("http://localhost:8080/api/users/update-profile", 
+			const { token } = useUserStore.getState(); // Get token from store
+			const res = await axios.put("http://localhost:8080/api/uploads/avatar", 
 				data,
+				{
+					headers: {
+						Authorization: `Bearer ${token}`,
+					}
+				},
 				{ withCredentials: true }
 			);
 			set({ user: res.data });
