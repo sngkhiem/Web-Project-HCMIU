@@ -52,7 +52,18 @@ public class CommentController {
                 .body(new MessageResponse("Error: " + e.getMessage()));
         }
     }
-    
+      @GetMapping
+    public ResponseEntity<?> getAllComments() {
+        try {
+            List<CommentResponse> comments = commentService.getAllComments();
+            return ResponseEntity.ok(comments);
+        } catch (Exception e) {
+            return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new MessageResponse("Error: " + e.getMessage()));
+        }
+    }
+
     @GetMapping("/video/{videoId}")
     public ResponseEntity<?> getVideoComments(@PathVariable Long videoId) {
         try {

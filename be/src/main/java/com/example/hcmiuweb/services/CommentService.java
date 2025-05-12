@@ -35,9 +35,7 @@ public class CommentService {
         this.userRepository = userRepository;
         this.videoRepository = videoRepository;
         this.notificationService = notificationService;
-    }
-
-    @Transactional
+    }    @Transactional
     public CommentResponse addComment(CommentRequest commentRequest) {
         User user = userRepository.findById(commentRequest.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found with ID: " + commentRequest.getUserId()));
@@ -102,7 +100,20 @@ public class CommentService {
         
         return new CommentResponse(savedComment);
     }
-
+    
+    @Transactional
+    public List<CommentResponse> getAllComments() {
+        // Get all top-level comments
+        List<Comment> allComments = commentRepository.findAll();
+        
+        // Convert to DTOs
+        return allComments.stream()
+                .filter(comment -> comment.getParentComment() == null) // Only return top-level comments
+                .map(CommentResponse::new)
+                .collect(Collectors.toList());
+    }
+    
+    @Transactional
     public List<CommentResponse> getVideoComments(Long videoId) {
         // Get top-level comments (those without a parent)
         List<Comment> topLevelComments = commentRepository.findByVideo_IdAndParentCommentIsNull(videoId);
@@ -112,10 +123,11 @@ public class CommentService {
                 .map(CommentResponse::new)
                 .collect(Collectors.toList());
     }
-
+    
+    @Transactional
     public List<CommentResponse> getUserComments(Long userId) {
         // First, check if the user exists
-        User user = userRepository.findById(userId)
+        userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
         
         // Get all comments by this user
@@ -126,7 +138,8 @@ public class CommentService {
                 .map(CommentResponse::new)
                 .collect(Collectors.toList());
     }
-
+    
+    @Transactional
     public CommentResponse getCommentById(Long commentId) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new RuntimeException("Comment not found with ID: " + commentId));

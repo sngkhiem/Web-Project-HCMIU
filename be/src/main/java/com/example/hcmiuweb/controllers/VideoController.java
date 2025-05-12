@@ -57,8 +57,13 @@ public class VideoController {
     }
 
     @GetMapping("/search")
-    public List<VideoDTO> searchVideos(@RequestParam String title) {
-        return videoService.searchVideosByTitleWithRatings(title);
+    public ResponseEntity<?> searchVideos(@RequestParam(required = false) String title) {
+        if (title == null || title.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body("Search title parameter is required");
+        }
+        
+        List<VideoDTO> videos = videoService.searchVideosByTitleWithRatings(title);
+        return ResponseEntity.ok(videos);
     }
 
     @PostMapping
