@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
-
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from 'react'
+import { Link, useLocation } from "react-router-dom";
 // import { useUserStore } from "../stores/useUserStore";
 
 const SignUpPage = () => {
+    const location = useLocation();
     // const { signup, loading } = useUserStore();
 
     const [formData, setFormData] = useState({
@@ -12,6 +12,14 @@ const SignUpPage = () => {
         phoneNumber: "",
         password: "",
     });
+
+    useEffect(() => {
+        const searchParams = new URLSearchParams(location.search);
+        const emailFromUrl = searchParams.get('email');
+        if (emailFromUrl) {
+            setFormData(prev => ({ ...prev, email: emailFromUrl }));
+        }
+    }, [location]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -83,24 +91,6 @@ const SignUpPage = () => {
                                 </div>
                             </div>
 
-                            {/* Email */}
-                            <div>
-                                <label htmlFor="phoneNumber" className="block text-sm/6 font-medium">
-                                    Phone Number
-                                </label>
-                                <div className="mt-2">
-                                    <input
-                                        id="phoneNumber"
-                                        name="phoneNumber"
-                                        type="text"
-                                        value={formData.phoneNumber}
-                                        required
-                                        onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
-                                        className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-                                    />
-                                </div>
-                            </div>
-
                             {/* Password */}
                             <div>
                                 <label htmlFor="password" className="block text-sm/6 font-medium">
@@ -117,16 +107,6 @@ const SignUpPage = () => {
                                         onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                                         className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                                     />
-                                </div>
-
-                                <div className="flex justify-between items-center text-sm mt-3">
-                                    <div className="flex items-center gap-x-2">
-                                        <p className="font-semibold">Remember me</p>
-                                        <input type="checkbox" name="remember" className="cursor-pointer" />
-                                    </div>
-                                    <Link to="#" className="font-semibold text-primary-text hover:text-brown-600">
-                                        Forgot password?
-                                    </Link>
                                 </div>
                             </div>
 

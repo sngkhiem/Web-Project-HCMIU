@@ -1,121 +1,90 @@
-/*
 import { create } from "zustand";
-import axios from "../config/axios";
+import axios from "axios";
 import { toast } from "react-hot-toast";
+import Cookies from 'js-cookie';
 
-export const useUserStore = create((set, get) => ({
+export const useUserStore = create((set) => ({
 	user: null,
+	token: null,
 	loading: false,
-	checkingAuth: true,
+	checkingAuth: false,
 	isUpdatingProfile: false,
 
 	signup: async ({ username, email, phoneNumber, password }) => {
 		set({ loading: true });
-
 		try {
-			const res = await axios.post("/auth/signup", { username, email, phoneNumber, password });
-			set({ user: res.data, loading: false });
+			await axios.post("/auth/signup", { username, email, phoneNumber, password });
+			toast.success("Signup successful. Please login.");
 		} catch (error) {
+			toast.error(error.response?.data?.message || "An error occurred during signup");
+		} finally {
 			set({ loading: false });
-			toast.error(error.response.data.message || "An error occurred");
 		}
 	},
 
-	login: async (email, password) => {
+	login: async (username, password) => {
 		set({ loading: true });
-
 		try {
-			const res = await axios.post("/auth/login", { email, password });
+			const res = await axios.post("http://localhost:8080/api/auth/signin", 
+				{ username, password },
+				{ withCredentials: true}
+			);
 
-			set({ user: res.data, loading: false });
+			const { ...userData } = res.data;
+			const jwtToken = Cookies.get("jwt");
+
+			set({
+				user: userData,
+				token: jwtToken,
+				loading: false
+			});
 		} catch (error) {
 			set({ loading: false });
-			toast.error(error.response.data.message || "An error occurred");
+			toast.error(error.response?.data?.message || "Login failed");
 		}
 	},
 
 	logout: async () => {
 		try {
-			await axios.post("/auth/logout");
+			await axios.post("http://localhost:8080/api/auth/logout", {}, { withCredentials: true });
 			set({ user: null });
 		} catch (error) {
-			toast.error(error.response?.data?.message || "An error occurred during logout");
+			toast.error(error.response?.data?.message || "Error during logout");
 		}
 	},
 
 	updateProfile: async (data) => {
 		set({ isUpdatingProfile: true });
 		try {
-		  	const res = await axios.put("/auth/update-profile", data);
-		  	set({ user: res.data });
-		  	toast.success("Profile updated successfully");
+			const { token } = useUserStore.getState(); // Get token from store
+			const res = await axios.put("http://localhost:8080/api/uploads/avatar", 
+				data,
+				{
+					headers: {
+						Authorization: `Bearer ${token}`,
+					}
+				},
+				{ withCredentials: true }
+			);
+			set({ user: res.data });
+			toast.success("Profile updated successfully");
 		} catch (error) {
-		  	console.log("error in update profile:", error);
-		  	toast.error(error.response.data.message);
+			toast.error(error.response?.data?.message || "Error updating profile");
 		} finally {
-		  	set({ isUpdatingProfile: false });
+			set({ isUpdatingProfile: false });
 		}
 	},
 
 	checkAuth: async () => {
 		set({ checkingAuth: true });
 		try {
-			const response = await axios.get("/auth/profile");
-			set({ user: response.data, checkingAuth: false });
+			const res = await axios.get("http://localhost:8080/api/auth/me", { withCredentials: true });
+			set({
+				user: res.data,
+				checkingAuth: false
+			});
 		} catch (error) {
-			console.log(error.message);
 			set({ checkingAuth: false, user: null });
 		}
-	},
-
-	refreshToken: async () => {
-		// Prevent multiple simultaneous refresh attempts
-		if (get().checkingAuth) return;
-
-		set({ checkingAuth: true });
-		try {
-			const response = await axios.post("/auth/refresh-token");
-			set({ checkingAuth: false });
-			return response.data;
-		} catch (error) {
-			set({ user: null, checkingAuth: false });
-			throw error;
-		}
-	},
-}));
-
-// TODO: Implement the axios interceptors for refreshing access token
-
-// Axios interceptor for token refresh
-let refreshPromise = null;
-
-axios.interceptors.response.use(
-	(response) => response,
-	async (error) => {
-		const originalRequest = error.config;
-		if (error.response?.status === 401 && !originalRequest._retry) {
-			originalRequest._retry = true;
-
-			try {
-				// If a refresh is already in progress, wait for it to complete
-				if (refreshPromise) {
-					await refreshPromise;
-					return axios(originalRequest);
-				}
-
-				// Start a new refresh process
-				refreshPromise = useUserStore.getState().refreshToken();
-				await refreshPromise;
-				refreshPromise = null;
-
-				return axios(originalRequest);
-			} catch (refreshError) {
-				// If refresh fails, redirect to login or handle as needed
-				useUserStore.getState().logout();
-				return Promise.reject(refreshError);
-			}
-		}
-		return Promise.reject(error);
 	}
-);
-*/
+}));

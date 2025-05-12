@@ -13,6 +13,7 @@ import com.example.hcmiuweb.services.UserDetailsImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -22,6 +23,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -31,10 +34,9 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "*", maxAge = 3600)
 public class AuthController {
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
-    
+
     @Autowired
     AuthenticationManager authenticationManager;
 
@@ -50,11 +52,33 @@ public class AuthController {
     @Autowired
     JwtUtils jwtUtils;
 
+    @GetMapping("/me")
+    public ResponseEntity<?> getCurrentUser() {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication != null && authentication.isAuthenticated()) {
+                UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+                return ResponseEntity.ok(new JwtResponse(
+                    null, // Don't send token in response
+                    userDetails.getId(),
+                    userDetails.getUsername(),
+                    userDetails.getEmail(),
+                    userDetails.getAuthorities().stream()
+                        .map(item -> item.getAuthority())
+                        .collect(Collectors.toList())
+                ));
+            }
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+    }
+
     @PostMapping("/signin")
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest, HttpServletResponse response) {
         try {
             logger.info("Authentication attempt for user: {}", loginRequest.getUsername());
-            
+
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
@@ -66,19 +90,26 @@ public class AuthController {
                     .map(item -> item.getAuthority())
                     .collect(Collectors.toList());
 
+            // Set JWT token in HTTP-only cookie
+            Cookie jwtCookie = new Cookie("jwt", jwt);
+            jwtCookie.setHttpOnly(true);
+            jwtCookie.setSecure(false); // Set to true in production with HTTPS
+            jwtCookie.setPath("/");
+            jwtCookie.setMaxAge(24 * 60 * 60); // 24 hours
+            response.addCookie(jwtCookie);
+
             logger.info("User {} successfully authenticated", loginRequest.getUsername());
-            
-            return ResponseEntity.ok(new JwtResponse(jwt,
-                    userDetails.getId(),
-                    userDetails.getUsername(),
-                    userDetails.getEmail(),
-                    roles));
+
+            return ResponseEntity.ok(new JwtResponse(
+                null, // Don't send token in response
+                userDetails.getId(),
+                userDetails.getUsername(),
+                userDetails.getEmail(),
+                roles
+            ));
         } catch (BadCredentialsException e) {
             logger.error("Authentication failed for user: {}", loginRequest.getUsername());
             return ResponseEntity.badRequest().body(new MessageResponse("Error: Invalid username or password"));
-        } catch (Exception e) {
-            logger.error("Authentication error: {}", e.getMessage());
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: " + e.getMessage()));
         }
     }
 
@@ -86,7 +117,7 @@ public class AuthController {
     public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterRequest signUpRequest) {
         try {
             logger.info("Registration attempt for username: {}, email: {}", signUpRequest.getUsername(), signUpRequest.getEmail());
-            
+
             if (userRepository.existsByUsername(signUpRequest.getUsername())) {
                 return ResponseEntity
                         .badRequest()
@@ -99,7 +130,6 @@ public class AuthController {
                         .body(new MessageResponse("Error: Email is already in use!"));
             }
 
-            // Create new user's account
             User user = new User(
                     signUpRequest.getUsername(),
                     signUpRequest.getEmail(),
@@ -137,15 +167,23 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logoutUser() {
+    public ResponseEntity<?> logoutUser(HttpServletResponse response) {
         try {
             logger.info("Logout attempt");
-            
+
             // Clear the authentication from the security context
             SecurityContextHolder.clearContext();
-            
+
+            // Clear the JWT cookie
+            Cookie jwtCookie = new Cookie("jwt", null);
+            jwtCookie.setHttpOnly(true);
+            jwtCookie.setSecure(false); // Set to true in production with HTTPS
+            jwtCookie.setPath("/");
+            jwtCookie.setMaxAge(0); // Delete the cookie
+            response.addCookie(jwtCookie);
+
             logger.info("User successfully logged out");
-            
+
             return ResponseEntity.ok(new MessageResponse("User logged out successfully!"));
         } catch (Exception e) {
             logger.error("Logout error: {}", e.getMessage());

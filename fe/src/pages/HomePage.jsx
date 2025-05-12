@@ -1,7 +1,7 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useEffect, useState, useRef } from 'react';
+import { Link } from 'react-router-dom';
 
-import ArrowRightIcon from '@heroicons/react/24/outline/ArrowRightIcon'
+import { ArrowRightIcon } from '@heroicons/react/24/solid';
 
 const reasons = [
     {
@@ -19,9 +19,11 @@ const reasons = [
         name: 'Download your shows to watch offline',
         description: 'Save your favorites easily and always have something to watch'
     }
-]
+];
 
 const HomePage = () => {
+    const [email, setEmail] = useState('');
+
     return (
         <div>
             <div className="relative">
@@ -51,35 +53,22 @@ const HomePage = () => {
                         <p className="text-md sm:text-lg text-gray-300 mb-6">
                             Ready to watch? Enter your email to create a new account.
                         </p>
-                        <div className="flex justify-center gap-3">
+
+                        <div className="flex flex-col md:flex-row items-center justify-center md:items-stretch gap-3">
                             <input
                                 type="email"
                                 placeholder="Email"
                                 required={true}
-                                className="w-full max-w-md px-5 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-50 bg-black-50 text-white"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                className="hidden md:block max-w-md px-5 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-50 bg-black-50 text-white"
                             />
-                            <Link to="/browse" className="flex items-center gap-2 bg-purple-700 text-xl text-white px-8 py-3 rounded-full font-semibold hover:bg-purple-600 transition-colors whitespace-nowrap">
+                            <Link 
+                                to={`/signup?email=${encodeURIComponent(email)}`} 
+                                className="flex items-center gap-2 bg-purple-700 text-xl text-white px-8 py-3 rounded-full font-semibold hover:bg-purple-600 transition-colors whitespace-nowrap"
+                            >
                                 Get Started <ArrowRightIcon className="w-5 h-5" />
                             </Link>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {/* Trending Section */}
-            <div className="bg-black py-16">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <h2 className="text-3xl font-bold text-white mb-8">Trending Now</h2>
-                    
-                    <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-4">
-                        {/* Movie 1 */}
-                        <div className="relative group cursor-pointer">
-                            <div className="absolute top-0 left-[-15%] text-white text-7xl font-bold p-2 z-40">1</div>
-                            <img 
-                                src="./assets/movie1.jpg" 
-                                alt="Movie 1"
-                                className="w-full h-auto rounded transition-transform duration-300 group-hover:scale-105"
-                            />
                         </div>
                     </div>
                 </div>

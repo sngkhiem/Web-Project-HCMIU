@@ -1,1 +1,17 @@
 @import "tailwindcss";
+
+@theme {
+    --color-primary-gray: #0f0f0f;
+    --color-pm-purple: #6b21a8;
+    --color-pm-purple-hover: #9233ea;
+}
+
+@layer utilities {
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+    .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+}
