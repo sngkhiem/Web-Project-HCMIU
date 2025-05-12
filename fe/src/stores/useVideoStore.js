@@ -1,8 +1,7 @@
 import { create } from "zustand";
 import axios from "axios";
 import toast from "react-hot-toast";
-
-import { useUserStore } from "./useUserStore"
+import Cookies from 'js-cookie';
 
 export const useVideoStore = create((set) => ({
 	videos: [],
@@ -14,7 +13,12 @@ export const useVideoStore = create((set) => ({
 	createVideo: async (videoData) => {
 		set({ loading: true });
 		try {
-			const res = await axios.post("/videos", videoData);
+			const token = Cookies.get('token');
+			const res = await axios.post("/videos", videoData, {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				}
+			});
 			set((prevState) => ({
 				videos: [...prevState.videos, res.data],
 				loading: false,
@@ -29,6 +33,15 @@ export const useVideoStore = create((set) => ({
 		set({ loading: true });
 		try {
 			const response = await axios.get("http://localhost:8080/api/videos", { withCredentials: true });
+			/*
+			const token = Cookies.get('token');
+			const response = await axios.get("http://localhost:8080/api/videos", {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				}
+			});
+			console.log(response.data)
+			*/
 			set({ videos: response.data, loading: false });
 		} catch (error) {
 			set({ error: "Failed to fetch videos", loading: false });
@@ -40,6 +53,14 @@ export const useVideoStore = create((set) => ({
 		set({ loading: true });
 		try {
 			const response = await axios.get(`http://localhost:8080/api/videos/${id}`, { withCredentials: true });
+			/*
+			const token = Cookies.get('token');
+			const response = await axios.get(`http://localhost:8080/api/videos/${id}`, {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				}
+			});
+			*/
 			set({ video: response.data, loading: false });
 		} catch (error) {
 			set({ error: "Failed to fetch videos", loading: false });
@@ -50,7 +71,12 @@ export const useVideoStore = create((set) => ({
 	fetchVideosByCategory: async (category) => {
 		set({ loading: true });
 		try {
-			const response = await axios.get(`/videos/category/${category}`);
+			const token = Cookies.get('token');
+			const response = await axios.get(`/videos/category/${category}`, {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				}
+			});
 			set({ videos: response.data.videos, loading: false });
 		} catch (error) {
 			set({ error: "Failed to fetch videos", loading: false });
@@ -61,7 +87,12 @@ export const useVideoStore = create((set) => ({
 	deleteVideo: async (videoId) => {
 		set({ loading: true });
 		try {
-			await axios.delete(`/videos/${videoId}`);
+			const token = Cookies.get('token');
+			await axios.delete(`/videos/${videoId}`, {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				}
+			});
 			set((prevVideos) => ({
 				videos: prevVideos.videos.filter((video) => video._id !== videoId),
 				loading: false,
@@ -75,7 +106,12 @@ export const useVideoStore = create((set) => ({
 	fetchReviews: async (videoId) => {
 		set({ loading: true });
 		try {
-			const response = await axios.get(`/ratings`);
+			const token = Cookies.get('token');
+			const response = await axios.get(`/ratings`, {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				}
+			});
 			set({ reviews: response.data.video.reviews, loading: false });
 		} catch (error) {
 			set({ error: "Failed to fetch reviews", loading: false });
@@ -86,7 +122,12 @@ export const useVideoStore = create((set) => ({
 	createReview: async (videoId, reviewData) => {
 		set({ loading: true });
 		try {
-			const res = await axios.post(`/ratings`, reviewData);
+			const token = Cookies.get('token');
+			const res = await axios.post(`/ratings`, reviewData, {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				}
+			});
 			console.log(res.data)
 			set((prevState) => ({
 				reviews: [...prevState.reviews, res.data],
