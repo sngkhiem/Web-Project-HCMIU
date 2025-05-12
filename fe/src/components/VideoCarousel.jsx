@@ -1,8 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Link } from "react-router-dom";
 
-import VideoSectionMain from './VideoSectionMain';
-
 import { BookmarkIcon } from '@heroicons/react/24/outline';
 import { PlayIcon } from '@heroicons/react/24/solid';
 
@@ -83,7 +81,7 @@ const VideoCarousel = () => {
                                     <ul className="flex gap-x-2 mb-3">
                                         {current === index && video.tags.map((tag) => {
                                             return (
-                                                <li className="w-fit px-3 py-1 bg-pm-purple font-semibold rounded-full">
+                                                <li key={tag} className="w-fit px-3 py-1 bg-pm-purple font-semibold rounded-full">
                                                     {tag}
                                                 </li>
                                             )
@@ -126,9 +124,7 @@ const VideoCarousel = () => {
 
             {/* Bottom dark overlay */}
             <div className="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-black/100 to-transparent z-10 pointer-events-none" />
-
-            <VideoSectionMain />
-      </div>
+        </div>
     )
 }
 

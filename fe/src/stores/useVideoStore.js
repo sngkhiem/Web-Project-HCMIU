@@ -28,13 +28,7 @@ export const useVideoStore = create((set) => ({
 	fetchAllVideos: async () => {
 		set({ loading: true });
 		try {
-			const token = useUserStore.getState().token;
-			const response = await axios.get("http://localhost:8080/api/videos", {
-				headers: {
-					Authorization: `Bearer ${token}`,
-				}
-			});
-			console.log(response.data)
+			const response = await axios.get("http://localhost:8080/api/videos", { withCredentials: true });
 			set({ videos: response.data, loading: false });
 		} catch (error) {
 			set({ error: "Failed to fetch videos", loading: false });
@@ -45,11 +39,7 @@ export const useVideoStore = create((set) => ({
 	fetchVideo: async (id) => {
 		set({ loading: true });
 		try {
-			const response = await axios.get(`http://localhost:8080/api/videos/${id}`, {
-				headers: {
-					Authorization: `Bearer ${token}`,
-				}
-			});
+			const response = await axios.get(`http://localhost:8080/api/videos/${id}`, { withCredentials: true });
 			set({ video: response.data, loading: false });
 		} catch (error) {
 			set({ error: "Failed to fetch videos", loading: false });

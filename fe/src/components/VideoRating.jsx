@@ -1,12 +1,21 @@
 import React, { useState } from 'react';
+import toast from "react-hot-toast";
 
 const VideoRating = ({ max = 5, onRate }) => {
     const [rating, setRating] = useState(0);
     const [hover, setHover] = useState(null);
   
-    const handleClick = (value) => {
-        setRating(value);
-        onRate?.(value); // optional callback to parent
+    const handleSubmitRating = async (value) => {
+        try {
+            setRating(value);
+            onRate && onRate(value);
+    
+            await axios.post('https://localhost:8080/api/ratings', { rating: value }, { withCredentials: true });
+            toast.success("Rating submitted!");
+            window.location.reload();
+        } catch (error) {
+            toast.error("Error submitting rating.");
+        }
     };
 
     return (
@@ -16,7 +25,7 @@ const VideoRating = ({ max = 5, onRate }) => {
             return (
                 <svg
                 key={value}
-                onClick={() => handleClick(value)}
+                onClick={() => handleSubmitRating(value)}
                 onMouseEnter={() => setHover(value)}
                 onMouseLeave={() => setHover(null)}
                 className={`w-5 h-5 cursor-pointer transition-colors duration-200 ${

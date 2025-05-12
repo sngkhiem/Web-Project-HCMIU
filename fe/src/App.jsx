@@ -14,6 +14,7 @@ import WatchPage from "./pages/WatchPage"
 import ProfilePage from './pages/ProfilePage';
 import WatchListPage from './pages/WatchListPage';
 import SearchPage from './pages/SearchPage';
+import AdminPage from './pages/AdminPage';
 
 import { useUserStore } from "./stores/useUserStore"
 
@@ -45,6 +46,8 @@ const App = () => {
 
                 <Route path="/profile" element={user ? <ProfilePage /> : <Navigate to="/" />} />
                 <Route path="/watchlist" element={user ? <WatchListPage /> : <Navigate to="/" />} />
+
+                <Route path="/admin" element={<AdminPage />} />
             </Routes>
 
             <Footer />
