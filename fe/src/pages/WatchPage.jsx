@@ -7,8 +7,13 @@ import { useCommentStore } from '../stores/useCommentStore';
 
 import Sidebar from '../components/Sidebar';
 import VideoRating from "../components/VideoRating"
-import { StarIcon, ChevronUpIcon } from '@heroicons/react/24/solid';
-import { BookmarkIcon, HandThumbUpIcon, HandThumbDownIcon } from '@heroicons/react/24/outline';
+import { StarIcon, ChevronUpIcon, ChevronDownIcon, TrashIcon } from '@heroicons/react/24/solid';
+import { BookmarkIcon, HandThumbUpIcon, HandThumbDownIcon, FaceSmileIcon } from '@heroicons/react/24/outline';
+
+import toast from 'react-hot-toast';
+
+// import { Picker } from 'emoji-mart';
+// import 'emoji-mart/css/emoji-mart.css';
 
 import { formatDate, formatTime } from "../config/format"
 
@@ -17,7 +22,12 @@ const WatchPage = () => {
 
     const { user } = useUserStore();
     const { video, loading, fetchVideo } = useVideoStore();
-    const { comment, fetchCommentByVideo } = useCommentStore();
+    const { comment, loadingComment, createComment, fetchCommentByVideo, deleteComment } = useCommentStore();
+
+    const [isFocused, setIsFocused] = useState(false);
+    const [newComment, setNewComment] = useState('')
+    const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+    const [toggleReplies, setToggleReplies] = useState(false);
 
     useEffect(() => {
         fetchVideo(id);
@@ -27,18 +37,51 @@ const WatchPage = () => {
         fetchCommentByVideo(id);
     }, [id, fetchCommentByVideo]);
 
+
     const handleRating = (value) => {
         console.log('Rated:', value);
     };
 
-    const handleSubmitComment = (e) => {
-        e.preventDefault();
+    const handleEmojiSelect = (emoji) => {
+        setNewComment((prev) => prev + emoji.native);
+    };
+
+    const handleCancel = () => {
+        setNewComment('');
+        setShowEmojiPicker(false);
+        setIsFocused(false);
+    };
+
+    const handleSubmitComment = async (e) => {
+		e.preventDefault();
+		try {
+			await createComment({ content: newComment, userId: user.id, videoId: video.id});
+            toast.success('Comment posted successfully!');
+			setNewComment('');
+            setShowEmojiPicker(false);
+            setIsFocused(false);
+
+            window.location.reload();
+		} catch (err) {
+			console.error('Error posting new comment: ' + err);
+            toast.error('Could not post comment. Please try again.');
+		}
+    }
+
+    const handleDeleteComment = async (commentId) => {
+        try {
+			await deleteComment(commentId);
+            toast.success('Comment deleted successfully!');
+		} catch (err) {
+			console.error('Error deleting comment: ' + err);
+            toast.error('Could not delete comment. Please try again.');
+		}
     }
 
     return (
         <div className="" >
             <div className="lg:flex">
-                <div className="relative flex flex-col flex-1 gap-y-5 px-3 lg:px-24 py-12 bg-black">               
+                <div className="relative flex flex-col flex-1 gap-y-5 px-5 lg:px-24 py-6 bg-black">               
                     {/* Video */}
                     {!loading ? (
                         <div className="relative w-full max-w-[1920px] pb-[56.25%] h-0 aspect-video">
@@ -51,24 +94,25 @@ const WatchPage = () => {
                         <div className="text-white text-center py-10">Loading video...</div>
                     )}
     
-                    <div className="flex flex-col gap-4">
-                        <h1 className="text-2xl font-semibold text-white">{video.title}</h1>
-                        <div className="flex items-center justify-between">
+                    <div className="flex flex-col gap-4 text-white">
+                        <h1 className="text-2xl font-semibold">{video.title}</h1>
+                        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-2">
                             {/* Video Interactions */}
                             <div className="flex items-center gap-2">
                                 <button className="p-3 bg-primary-gray hover:bg-purple-700 transition-colors rounded-lg cursor-pointer">
-                                    <BookmarkIcon className="h-5 text-white"/>
+                                    <BookmarkIcon className="h-5"/>
                                 </button>
 
                                 <VideoRating onRate={handleRating} />
                             </div>
 
-                            {/* View Count */}
-                            <div className="flex flex-col">
-                                <span className="text-lg text-white">10,000,000 Views</span>
-                                <span className="flex gap-2 text-lg text-white">
+                            {/* View & Rating Count */}
+                            <div className="flex gap-5 font-semibold text-lg">
+                                <span>10,000,000 Views</span>
+                                <span className="flex gap-2">
                                     <StarIcon className="w-5" />
-                                    {video.averageRating} ({video.ratingCount} Ratings)</span>
+                                    {video.averageRating} ({video.ratingCount} Ratings)
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -94,37 +138,83 @@ const WatchPage = () => {
 
                         <div>
                             <form onSubmit={handleSubmitComment} className="space-y-6">
-                                <div className="flex items-center gap-3">
+                                <div>
                                     <input
-                                        id="comment"
-                                        name="comment"
+                                        id="newComment"
+                                        name="newComment"
                                         type="text"
-                                        value={comment}
+                                        value={newComment}
                                         required
                                         placeholder="Enter your comment here..."
-                                        onChange={(e) => setComment(e.target.value)}
-                                        className="w-full py-1.5 text-base text-white outline-none border-b-1 border-primary-gray placeholder:text-gray-400 focus:border-b-2 focus:border-white transition-colors sm:text-sm/6"
+                                        onChange={(e) => setNewComment(e.target.value)}
+                                        onFocus={() => setIsFocused(true)}
+                                        onBlur={(e) => {
+                                            // Prevent closing when interacting with emoji picker or buttons
+                                            setTimeout(() => {
+                                                if (!document.activeElement.closest('.comment-actions')) {
+                                                    setIsFocused(false);
+                                                    setShowEmojiPicker(false);
+                                                }
+                                            }, 100);
+                                        }}
+                                        className="w-full mb-2 py-1.5 text-base text-white outline-none border-b-1 border-primary-gray placeholder:text-gray-400 focus:border-b-2 focus:border-white transition-colors sm:text-sm/6"
                                     />
-                                    <button
-                                        type="submit"
-                                        className="justify-center rounded-md bg-primary-gray px-3 py-1.5 text-sm/6 font-semibold text-white hover:opacity-70 transition-opacity cursor-pointer"
-                                    >
-                                        Submit
-                                    </button>
+
+                                    {/* Emoji Picker & Buttons */}
+                                    {isFocused && (
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex items-center p-2 rounded-full hover:bg-primary-gray transition-colors">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                                                    className="text-xl text-white cursor-pointer comment-actions"
+                                                >
+                                                    <FaceSmileIcon className="w-6 h-6" />
+                                                </button>
+
+                                                {showEmojiPicker && (
+                                                <div className="mt-2">
+                                                    <Picker onSelect={handleEmojiSelect} />
+                                                </div>
+                                                )}
+                                            </div>
+
+                                            <div className="flex items-center gap-3"> 
+                                                <button
+                                                    type="button"
+                                                    onClick={handleCancel}
+                                                    className="justify-center rounded-md px-5 py-1.5 text-sm/6 font-semibold text-white hover:bg-primary-gray transition-colors cursor-pointer"
+                                                >
+                                                    Cancel
+                                                </button>
+                                                <button
+                                                    type="submit"
+                                                    disabled={loadingComment || !newComment.trim()}
+                                                    className={`justify-center rounded-md px-5 py-1.5 text-sm/6 font-semibold
+                                                        ${newComment.trim()
+                                                            ? 'bg-pm-purple text-white hover:bg-purple-600 transition-colors'
+                                                            : 'bg-primary-gray text-gray-600 transition-colors cursor-not-allowed'
+                                                        } cursor-pointer`}
+                                                >
+                                                    {loadingComment ? 'Posting...' : 'Post'}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             </form>
                         </div>
 
                         {comment.map((cmt) => {
                             return (
-                                <div key={cmt.id} className="py-2 flex gap-5">
-                                    <img src={cmt.avatar || "./assets/avatar.png"} alt="" className="h-12 w-12 object-cover rounded-full" />
+                                <div key={cmt.id} className="mb-2 flex gap-5 text-white">
+                                    <img src={cmt.avatar || "./assets/avatar.png"} alt={cmt.username} className="h-12 w-12 object-cover rounded-full" />
         
                                     <div className="flex flex-col gap-1">
                                         {/* User Details */}
                                         <div className="flex gap-3 items-center">
-                                            <h3 className="text-md font-semibold text-white">{cmt.userId}</h3>
-                                            <span className="text-md text-gray-700">{ccmt.uploadDate}</span>
+                                            <h3 className="text-md font-semibold text-white">{cmt.username}</h3>
+                                            <span className="text-md text-gray-600">{formatDate(cmt.datePosted)}</span>
                                         </div>
         
                                         {/* Comment */}
@@ -137,7 +227,7 @@ const WatchPage = () => {
                                                 <button className="cursor-pointer">
                                                     <HandThumbUpIcon className="text-white w-5" />
                                                 </button>
-                                                <span className="text-white">0</span>
+                                                <span className="hidden text-white">0</span>
                                             </div>
         
                                             {/* Dislike Button */}
@@ -146,7 +236,6 @@ const WatchPage = () => {
                                                     <HandThumbDownIcon className="text-white w-5" />
                                                 </button>
                                             </div>
-        
                                             {/* Reply Button */}
                                             <button className="px-3 py-1 text-sm font-semibold text-white hover:bg-primary-gray rounded-lg cursor-pointer">
                                                 Reply
@@ -154,11 +243,14 @@ const WatchPage = () => {
                                         </div>
         
                                         {/* Number of Replies */}
-                                        <button className="px-2 py-1 my-2 flex w-fit items-center justify-center gap-2 hover:bg-blue-100 rounded-full transition-colors cursor-pointer">
-                                            <ChevronUpIcon className="h-5 text-blue-400" />
-                                            <span className="text-blue-400">{cmt.replies.length} Replies</span>
-                                        </button>
+                                        {cmt.replies.length > 0 && (
+                                            <button className="px-2 py-1 my-2 flex w-fit items-center justify-center gap-2 hover:bg-blue-100 rounded-full transition-colors cursor-pointer" onClick={() => setToggleReplies(!toggleReplies)}>
+                                                {toggleReplies ? <ChevronUpIcon className="h-5 text-blue-400" /> : <ChevronDownIcon className="h-5 text-blue-400" />}
+                                                <span className="text-blue-400">{cmt.replies.length} Replies</span>
+                                            </button>
+                                        )}
 
+                                        {toggleReplies && (
                                         <div className="flex flex-col gap-2">
                                             {cmt.replies.map((reply) => {
                                                 return (
@@ -169,7 +261,7 @@ const WatchPage = () => {
                                                             {/* User Details */}
                                                             <div className="flex gap-3 items-center">
                                                                 <h3 className="text-md font-semibold text-white">{reply.username}</h3>
-                                                                <span className="text-md text-gray-700">{reply.date}</span>
+                                                                <span className="text-md text-gray-600">{formatDate(cmt.datePosted)}</span>
                                                             </div>
                             
                                                             {/* Comment */}
@@ -198,10 +290,27 @@ const WatchPage = () => {
                                                                 </button>
                                                             </div>
                                                         </div>
+
+                                                        {user.id === reply.userId && (
+                                                            <div className="ml-auto">
+                                                                <button className="p-2 rounded-full hover:bg-red-400 transition-colors cursor-pointer" >
+                                                                    <TrashIcon className="w-5 text-white" />
+                                                                </button>
+                                                            </div>
+                                                        )}
                                                     </div>
                                                 )})}
-                                            </div>
+                                        </div>
+                                        )}
                                     </div>
+
+                                    {user.id === cmt.userId && (
+                                        <div className="ml-auto">
+                                            <button className="p-2 rounded-full hover:bg-red-400 transition-colors cursor-pointer" >
+                                                <TrashIcon className="w-5 text-white" />
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
                             )
                         })}

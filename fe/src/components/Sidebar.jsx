@@ -12,7 +12,7 @@ const Sidebar = () => {
     }, [fetchAllVideos]);
 
     return (
-        <div className="lg:w-md bg-black text-white px-3 lg:pr-24 lg:py-12 overflow-y-auto">
+        <div className="lg:w-md bg-black text-white px-3 lg:pr-24 lg:py-6 overflow-y-auto">
             <ul>
                 {videos.map((video) => (
                     <a key={video.id} href={`/watch/${video.id}`}>

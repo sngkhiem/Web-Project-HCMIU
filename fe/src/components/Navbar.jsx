@@ -109,13 +109,13 @@ const Navbar = () => {
                                     </AnimatePresence>
                                 </div>
 
-                                {/* Notifications */}
+                                {/* Watch LIst */}
                                 <Link
-                                    to="#"
+                                    to={`/watchlist/${user.id}`}
                                     className="relative rounded-full bg-primary-text p-1 text-gray-400 hover:text-white focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 focus:outline-hidden"
                                 >
                                     <span className="absolute -inset-1.5" />
-                                    <span className="sr-only">View notifications</span>
+                                    <span className="sr-only">View watch list</span>
                                     <BookmarkIcon aria-hidden="true" className="size-6" />
                                 </Link>
 

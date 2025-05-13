@@ -56,7 +56,7 @@ export const useUserStore = create((set) => ({
 	updateProfile: async (data) => {
 		set({ isUpdatingProfile: true });
 		try {
-			const { token } = useUserStore.getState(); // Get token from store
+			const token = Cookies.get('jwt');
 			const res = await axios.put("http://localhost:8080/api/uploads/avatar", 
 				data,
 				{
@@ -64,12 +64,11 @@ export const useUserStore = create((set) => ({
 						Authorization: `Bearer ${token}`,
 					}
 				},
-				{ withCredentials: true }
 			);
 			set({ user: res.data });
 			toast.success("Profile updated successfully");
 		} catch (error) {
-			toast.error(error.response?.data?.message || "Error updating profile");
+			toast.error(error.response?.data?.message);
 		} finally {
 			set({ isUpdatingProfile: false });
 		}
