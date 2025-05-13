@@ -65,10 +65,10 @@ public class SecurityConfig {
             .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> 
-                auth.requestMatchers("/api/auth/**").permitAll()
-                    .requestMatchers("/api/test/**").permitAll()
-                    .requestMatchers("/api/videos/**").permitAll()
-                    // .requestMatchers(HttpMethod.GET, "/api/comments/**").permitAll()
+                // auth.requestMatchers("/api/auth/**").permitAll()
+                //     .requestMatchers("/api/test/**").permitAll()
+                //     .requestMatchers("/api/videos/**").permitAll()
+                auth.requestMatchers("/api/**").permitAll()
                     .anyRequest().authenticated()
             );
         
