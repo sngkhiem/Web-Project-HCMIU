@@ -179,8 +179,7 @@
             "description": "Get all videos"
           },
           "response": []
-        },
-        {
+        },        {
           "name": "Get Video by ID",
           "request": {
             "method": "GET",
@@ -190,6 +189,25 @@
               "path": ["api", "videos", "1"]
             },
             "description": "Get a video by ID"
+          },
+          "response": []
+        },
+        {
+          "name": "Search Videos by Title",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/videos/search?title=sample",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "videos", "search"],
+              "query": [
+                {
+                  "key": "title",
+                  "value": "sample"
+                }
+              ]
+            },
+            "description": "Search for videos by title"
           },
           "response": []
         },
@@ -694,6 +712,116 @@
               "path": ["api", "subscriptions", "1", "2"]
             },
             "description": "Unsubscribe from a creator (subscriberId/creatorId)"
+          },
+          "response": []        }
+      ]
+    },
+    {
+      "name": "Watchlist",
+      "description": "Endpoints for watchlist management",
+      "item": [
+        {
+          "name": "Get User's Watchlist",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/watchlist/user/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "watchlist", "user", "1"]
+            },
+            "description": "Get watchlist for a specific user"
+          },
+          "response": []
+        },
+        {
+          "name": "Add Video to Watchlist",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/watchlist/add/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "watchlist", "add", "1"]
+            },
+            "description": "Add a video to user's watchlist"
+          },
+          "response": []
+        },
+        {
+          "name": "Remove Video from Watchlist",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/watchlist/remove/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "watchlist", "remove", "1"]
+            },
+            "description": "Remove a video from user's watchlist"
+          },
+          "response": []
+        },
+        {
+          "name": "Clear Watchlist",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/watchlist/clear",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "watchlist", "clear"]
+            },
+            "description": "Clear all videos from user's watchlist"
+          },
+          "response": []
+        },
+        {
+          "name": "Check Video in Watchlist",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/watchlist/check/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "watchlist", "check", "1"]
+            },
+            "description": "Check if a video is in the user's watchlist"
           },
           "response": []
         }
