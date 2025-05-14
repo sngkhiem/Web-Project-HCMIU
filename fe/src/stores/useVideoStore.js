@@ -6,6 +6,7 @@ import Cookies from 'js-cookie';
 export const useVideoStore = create((set) => ({
 	videos: [],
 	video: [],
+	searchResults: [],
 	loading: false,
 
 	setVideos: (videos) => set({ videos }),
@@ -136,6 +137,17 @@ export const useVideoStore = create((set) => ({
 		} catch (error) {
 			toast.error(error.response.data.error);
 			set({ loading: false });
+		}
+	},
+
+	fetchVideosBySearch: async (keyword) => {
+		set({ loading: true });
+		try {
+			const res = await axios.get(`http://localhost:8080/api/videos/search?title=${keyword}`, { withCredentials: true });
+			set({ searchResults: res.data, loading: false });
+		} catch (error) {
+			set({ error: "Failed to fetch search results", loading: false });
+			toast.error(error.response.data.error || "Failed to fetch search results");
 		}
 	},
 }));

@@ -1,33 +1,36 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react';
 import { useParams } from "react-router-dom";
+import toast from 'react-hot-toast';
+import axios from "axios";
 
 import { useUserStore } from '../stores/useUserStore';
 import { useVideoStore } from '../stores/useVideoStore';
 import { useCommentStore } from '../stores/useCommentStore';
 
 import Sidebar from '../components/Sidebar';
-import VideoRating from "../components/VideoRating"
 import { StarIcon, ChevronUpIcon, ChevronDownIcon, TrashIcon } from '@heroicons/react/24/solid';
 import { BookmarkIcon, HandThumbUpIcon, HandThumbDownIcon, FaceSmileIcon } from '@heroicons/react/24/outline';
 
-import toast from 'react-hot-toast';
+import { formatDate } from "../config/format";
 
 // import { Picker } from 'emoji-mart';
 // import 'emoji-mart/css/emoji-mart.css';
-
-import { formatDate, formatTime } from "../config/format"
 
 const WatchPage = () => {
     const { id } = useParams(); // Get video ID from URL
 
     const { user } = useUserStore();
     const { video, loading, fetchVideo } = useVideoStore();
-    const { comment, loadingComment, createComment, fetchCommentByVideo, deleteComment } = useCommentStore();
+    const { videoComments, loadingComment, createComment, fetchCommentByVideo, deleteComment, createReply } = useCommentStore();
 
-    const [isFocused, setIsFocused] = useState(false);
+    const [userRating, setUserRating] = useState(0);
+    const [isFocusedComment, setIsFocusedComment] = useState(false);
+    const [isFocusedReply, setIsFocusedReply] = useState(false);
     const [newComment, setNewComment] = useState('')
+    const [newReply, setNewReply] = useState('')
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [toggleReplies, setToggleReplies] = useState(false);
+    const [replyToComment, setReplyToComment] = useState(null);
 
     useEffect(() => {
         fetchVideo(id);
@@ -37,9 +40,16 @@ const WatchPage = () => {
         fetchCommentByVideo(id);
     }, [id, fetchCommentByVideo]);
 
-
-    const handleRating = (value) => {
-        console.log('Rated:', value);
+    const handleSubmitRating = async (e) => {
+        e.preventDefault();
+        try {
+            await axios.post("http://localhost:8080/api/ratings", { videoId: video.id, userId: user.id, rating: userRating }, { withCredentials: true });
+            toast.success("Rating submitted!");
+            window.location.reload();
+		} catch (err) {
+            console.error('Error rating video: ' + err);
+            toast.error('Could not rate video. Please try again.');
+        }
     };
 
     const handleEmojiSelect = (emoji) => {
@@ -49,7 +59,9 @@ const WatchPage = () => {
     const handleCancel = () => {
         setNewComment('');
         setShowEmojiPicker(false);
-        setIsFocused(false);
+        setIsFocusedComment(false);
+        setIsFocusedReply(false);
+        setReplyToComment(null);
     };
 
     const handleSubmitComment = async (e) => {
@@ -59,7 +71,7 @@ const WatchPage = () => {
             toast.success('Comment posted successfully!');
 			setNewComment('');
             setShowEmojiPicker(false);
-            setIsFocused(false);
+            setIsFocusedComment(false);
 
             window.location.reload();
 		} catch (err) {
@@ -75,6 +87,22 @@ const WatchPage = () => {
 		} catch (err) {
 			console.error('Error deleting comment: ' + err);
             toast.error('Could not delete comment. Please try again.');
+		}
+    }
+
+    const handleSubmitReply = async (e, commentId) => {
+		e.preventDefault();
+		try {
+			await createReply({ content: newReply, userId: user.id, videoId: video.id, parentCommentId: commentId});
+            toast.success('Reply posted successfully!');
+			setNewReply('');
+            setShowEmojiPicker(false);
+            setIsFocusedReply(false);
+
+            window.location.reload();
+		} catch (err) {
+			console.error('Error posting new reply: ' + err);
+            toast.error('Could not post reply. Please try again.');
 		}
     }
 
@@ -103,7 +131,14 @@ const WatchPage = () => {
                                     <BookmarkIcon className="h-5"/>
                                 </button>
 
-                                <VideoRating onRate={handleRating} />
+                                <form onSubmit={handleSubmitRating} className="flex gap-5">
+                                    <select value={userRating} onChange={(e) => setUserRating(e.target.value)} className="bg-primary-gray px-2 cursor-pointer">
+                                        {[1, 2, 3, 4, 5].map((num) => (
+                                            <option key={num} value={num} className="cursor-pointer">{num} ⭐</option>
+                                        ))}
+                                    </select>
+                                    <button type="submit" className="bg-primary-gray px-5 py-2 rounded-lg text-white text-lg flex items-center gap-2 hover:bg-pm-purple-hover transition-colors cursor-pointer">Submit Rating</button>
+                                </form>
                             </div>
 
                             {/* View & Rating Count */}
@@ -111,7 +146,7 @@ const WatchPage = () => {
                                 <span>10,000,000 Views</span>
                                 <span className="flex gap-2">
                                     <StarIcon className="w-5" />
-                                    {video.averageRating} ({video.ratingCount} Ratings)
+                                    {video.averageRating?.toFixed(1)} ({video.ratingCount} Ratings)
                                 </span>
                             </div>
                         </div>
@@ -133,7 +168,7 @@ const WatchPage = () => {
                     {/* Comment Section */}
                     <div className="flex flex-col gap-4">
                         <div className="flex justify-between items-center">
-                            <span className="text-white text-lg font-semibold">{comment.length} Comments</span>
+                            <span className="text-white text-lg font-semibold">{videoComments.length} Comment{videoComments.length > 1 ? 's' : ''}</span>
                         </div>
 
                         <div>
@@ -147,12 +182,12 @@ const WatchPage = () => {
                                         required
                                         placeholder="Enter your comment here..."
                                         onChange={(e) => setNewComment(e.target.value)}
-                                        onFocus={() => setIsFocused(true)}
+                                        onFocus={() => setIsFocusedComment(true)}
                                         onBlur={(e) => {
                                             // Prevent closing when interacting with emoji picker or buttons
                                             setTimeout(() => {
                                                 if (!document.activeElement.closest('.comment-actions')) {
-                                                    setIsFocused(false);
+                                                    setIsFocusedComment(false);
                                                     setShowEmojiPicker(false);
                                                 }
                                             }, 100);
@@ -161,7 +196,7 @@ const WatchPage = () => {
                                     />
 
                                     {/* Emoji Picker & Buttons */}
-                                    {isFocused && (
+                                    {isFocusedComment && (
                                         <div className="flex items-center justify-between">
                                             <div className="flex items-center p-2 rounded-full hover:bg-primary-gray transition-colors">
                                                 <button
@@ -205,68 +240,139 @@ const WatchPage = () => {
                             </form>
                         </div>
 
-                        {comment.map((cmt) => {
-                            return (
-                                <div key={cmt.id} className="mb-2 flex gap-5 text-white">
-                                    <img src={cmt.avatar || "./assets/avatar.png"} alt={cmt.username} className="h-12 w-12 object-cover rounded-full" />
-        
-                                    <div className="flex flex-col gap-1">
-                                        {/* User Details */}
-                                        <div className="flex gap-3 items-center">
-                                            <h3 className="text-md font-semibold text-white">{cmt.username}</h3>
-                                            <span className="text-md text-gray-600">{formatDate(cmt.datePosted)}</span>
-                                        </div>
-        
-                                        {/* Comment */}
-                                        <p className="text-md text-white">{cmt.content}</p>
-        
-                                        {/* Comment Interactions */}
-                                        <div className="flex items-center gap-3 mt-1">
-                                            {/* Like Button */}
-                                            <div className="flex gap-2">
-                                                <button className="cursor-pointer">
-                                                    <HandThumbUpIcon className="text-white w-5" />
-                                                </button>
-                                                <span className="hidden text-white">0</span>
-                                            </div>
-        
-                                            {/* Dislike Button */}
-                                            <div className="flex gap-2">
-                                                <button className="cursor-pointer">
-                                                    <HandThumbDownIcon className="text-white w-5" />
-                                                </button>
-                                            </div>
-                                            {/* Reply Button */}
-                                            <button className="px-3 py-1 text-sm font-semibold text-white hover:bg-primary-gray rounded-lg cursor-pointer">
-                                                Reply
-                                            </button>
-                                        </div>
-        
-                                        {/* Number of Replies */}
-                                        {cmt.replies.length > 0 && (
-                                            <button className="px-2 py-1 my-2 flex w-fit items-center justify-center gap-2 hover:bg-blue-100 rounded-full transition-colors cursor-pointer" onClick={() => setToggleReplies(!toggleReplies)}>
-                                                {toggleReplies ? <ChevronUpIcon className="h-5 text-blue-400" /> : <ChevronDownIcon className="h-5 text-blue-400" />}
-                                                <span className="text-blue-400">{cmt.replies.length} Replies</span>
-                                            </button>
-                                        )}
+                        {/* Comments */}
+                        {videoComments.map((comment) => (
+                            <div key={comment.id} className="mb-2 flex gap-5 text-white">
+                                <img src={comment.avatar || "../assets/avatar.png"} alt={comment.username} className="h-12 w-12 object-cover rounded-full" />
 
-                                        {toggleReplies && (
+                                <div className="flex flex-col gap-1">
+                                    {/* User Details */}
+                                    <div className="flex gap-3 items-center text-md">
+                                        <h3 className="font-semibold">{comment.username}</h3>
+                                        <span className="text-gray-600">{formatDate(comment.datePosted)}</span>
+                                    </div>
+
+                                    {/* Content */}
+                                    <p className="text-md">{comment.content}</p>
+
+                                    {/* Comment Interactions */}
+                                    <div className="flex items-center gap-3 mt-1">
+                                        {/* Like Button */}
+                                        <div className="flex gap-2">
+                                            <button className="cursor-pointer">
+                                                <HandThumbUpIcon className="text-white w-5 hover:scale-110 transition" />
+                                            </button>
+                                            <span>0</span>
+                                        </div>
+
+                                        {/* Dislike Button */}
+                                        <div className="flex gap-2">
+                                            <button className="cursor-pointer">
+                                                <HandThumbDownIcon className="text-white w-5 hover:scale-110 transition" />
+                                            </button>
+                                        </div>
+                                        {/* Reply Button */}
+                                        <button className="px-3 py-1 text-sm font-semibold text-white hover:bg-primary-gray rounded-lg cursor-pointer" onClick={() =>setReplyToComment(replyToComment === comment.id ? null : comment.id)}>
+                                            Reply
+                                        </button>
+                                    </div>
+
+                                    {replyToComment === comment.id && (
+                                        <div>
+                                            <form onSubmit={(e) => handleSubmitReply(e, comment.id)} className="space-y-6">
+                                                <div>
+                                                    <input
+                                                        id="newReply"
+                                                        name="newReply"
+                                                        type="text"
+                                                        value={newReply}
+                                                        required
+                                                        placeholder="Enter your reply here..."
+                                                        onChange={(e) => setNewReply(e.target.value)}
+                                                        onFocus={() => setIsFocusedReply(true)}
+                                                        onBlur={(e) => {
+                                                            // Prevent closing when interacting with emoji picker or buttons
+                                                            setTimeout(() => {
+                                                                if (!document.activeElement.closest('.comment-actions')) {
+                                                                    setIsFocusedReply(false);
+                                                                    setShowEmojiPicker(false);
+                                                                }
+                                                            }, 100);
+                                                        }}
+                                                        className="w-full mb-2 py-1.5 text-base text-white outline-none border-b-1 border-primary-gray placeholder:text-gray-400 focus:border-b-2 focus:border-white transition-colors sm:text-sm/6"
+                                                    />
+
+                                                    {/* Emoji Picker & Buttons */}
+                                                    {isFocusedReply && (
+                                                        <div className="flex items-center justify-between">
+                                                            <div className="flex items-center p-2 rounded-full hover:bg-primary-gray transition-colors">
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                                                                    className="text-xl text-white cursor-pointer comment-actions"
+                                                                >
+                                                                    <FaceSmileIcon className="w-6 h-6" />
+                                                                </button>
+
+                                                                {showEmojiPicker && (
+                                                                <div className="mt-2">
+                                                                    <Picker onSelect={handleEmojiSelect} />
+                                                                </div>
+                                                                )}
+                                                            </div>
+
+                                                            <div className="flex items-center gap-3"> 
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={handleCancel}
+                                                                    className="justify-center rounded-md px-5 py-1.5 text-sm/6 font-semibold text-white hover:bg-primary-gray transition-colors cursor-pointer"
+                                                                >
+                                                                    Cancel
+                                                                </button>
+                                                                <button
+                                                                    type="submit"
+                                                                    disabled={loadingComment || !newReply.trim()}
+                                                                    className={`justify-center rounded-md px-5 py-1.5 text-sm/6 font-semibold
+                                                                        ${newReply.trim()
+                                                                            ? 'bg-pm-purple text-white hover:bg-purple-600 transition-colors'
+                                                                            : 'bg-primary-gray text-gray-600 transition-colors cursor-not-allowed'
+                                                                        } cursor-pointer`}
+                                                                >
+                                                                    {loadingComment ? 'Posting...' : 'Post'}
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </form>
+                                        </div>
+                                    )}
+
+                                    {/* Number of Replies */}
+                                    {comment.replies?.length > 0 && (
+                                        <button className="px-2 py-1 my-2 flex w-fit items-center justify-center gap-2 hover:bg-blue-100 rounded-full transition-colors cursor-pointer" onClick={() => setToggleReplies(!toggleReplies)}>
+                                            {toggleReplies ? <ChevronUpIcon className="h-5 text-blue-400" /> : <ChevronDownIcon className="h-5 text-blue-400" />}
+                                            <span className="text-blue-400">{comment.replies.length} Replies</span>
+                                        </button>
+                                    )}
+
+                                    {toggleReplies && (
                                         <div className="flex flex-col gap-2">
-                                            {cmt.replies.map((reply) => {
+                                            {comment.replies.map((reply) => {
                                                 return (
                                                     <div key={reply.id} className="py-1 flex gap-5">
-                                                        <img src={reply.avatar} alt={reply.username} className="h-12 w-12 object-cover rounded-full" />
-                            
+                                                        <img src={reply.avatar || "../assets/avatar.png"} alt={reply.username} className="h-12 w-12 object-cover rounded-full" />
+
                                                         <div className="flex flex-col gap-1">
                                                             {/* User Details */}
                                                             <div className="flex gap-3 items-center">
                                                                 <h3 className="text-md font-semibold text-white">{reply.username}</h3>
-                                                                <span className="text-md text-gray-600">{formatDate(cmt.datePosted)}</span>
+                                                                <span className="text-md text-gray-600">{formatDate(reply.datePosted)}</span>
                                                             </div>
-                            
+
                                                             {/* Comment */}
                                                             <p className="text-md text-white">{reply.content}</p>
-                            
+
                                                             {/* Comment Interactions */}
                                                             <div className="flex items-center gap-3 mt-1">
                                                                 {/* Like Button */}
@@ -276,18 +382,13 @@ const WatchPage = () => {
                                                                     </button>
                                                                     <span className="text-white">{reply.likes}</span>
                                                                 </div>
-                            
+
                                                                 {/* Dislike Button */}
                                                                 <div className="flex gap-2">
                                                                     <button className="cursor-pointer">
                                                                         <HandThumbDownIcon className="text-white w-5" />
                                                                     </button>
                                                                 </div>
-                            
-                                                                {/* Reply Button */}
-                                                                <button className="px-3 py-1 text-sm font-semibold text-white hover:bg-primary-gray rounded-lg cursor-pointer">
-                                                                    Reply
-                                                                </button>
                                                             </div>
                                                         </div>
 
@@ -299,21 +400,21 @@ const WatchPage = () => {
                                                             </div>
                                                         )}
                                                     </div>
-                                                )})}
-                                        </div>
-                                        )}
-                                    </div>
-
-                                    {user.id === cmt.userId && (
-                                        <div className="ml-auto">
-                                            <button className="p-2 rounded-full hover:bg-red-400 transition-colors cursor-pointer" >
-                                                <TrashIcon className="w-5 text-white" />
-                                            </button>
+                                                )
+                                            })}
                                         </div>
                                     )}
                                 </div>
-                            )
-                        })}
+
+                                {user.id === comment.userId && (
+                                    <div className="ml-auto">
+                                        <button className="p-2 rounded-full hover:bg-red-400 transition-colors cursor-pointer">
+                                            <TrashIcon className="w-5 text-white" />
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        ))}
                     </div>
                 </div>
 

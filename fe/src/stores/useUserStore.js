@@ -10,10 +10,10 @@ export const useUserStore = create((set) => ({
 	checkingAuth: false,
 	isUpdatingProfile: false,
 
-	signup: async ({ username, email, phoneNumber, password }) => {
+	signup: async ({ username, email, password }) => {
 		set({ loading: true });
 		try {
-			await axios.post("/auth/signup", { username, email, phoneNumber, password });
+			await axios.post("http://localhost:8080/api/auth/signup", { username, email, password });
 			toast.success("Signup successful. Please login.");
 		} catch (error) {
 			toast.error(error.response?.data?.message || "An error occurred during signup");

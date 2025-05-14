@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { motion } from "framer-motion";
 
 import CreateVideoForm from "../components/CreateVideoForm";
-import VideosList from "../components/VideosList";
 
 import { useVideoStore } from "../stores/useVideoStore";
 
@@ -47,7 +46,6 @@ const AdminPage = () => {
 					))}
 				</div>
 				{activeTab === "create" && <CreateVideoForm />}
-				{activeTab === "drinks" && <VideosList />}
 			</div>
 		</div>
     )

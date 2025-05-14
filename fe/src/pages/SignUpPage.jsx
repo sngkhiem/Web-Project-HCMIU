@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useLocation } from "react-router-dom";
-// import { useUserStore } from "../stores/useUserStore";
+
+import { useUserStore } from "../stores/useUserStore";
 
 const SignUpPage = () => {
     const location = useLocation();
-    // const { signup, loading } = useUserStore();
+    const { signup, loading } = useUserStore();
 
     const [formData, setFormData] = useState({
         username: "",
         email: "",
-        phoneNumber: "",
         password: "",
     });
 

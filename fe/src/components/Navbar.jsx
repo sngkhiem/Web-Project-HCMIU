@@ -1,14 +1,21 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { motion, AnimatePresence } from "framer-motion"
 import SearchCard from './SearchCard'
 
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
 import { BookmarkIcon, Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 
+import { useVideoStore } from '../stores/useVideoStore';
 import { useUserStore } from "../stores/useUserStore";
 
+import toast from "react-hot-toast"
+
 const Navbar = () => {
+    const navigate = useNavigate();
+
+    const { fetchVideosBySearch } = useVideoStore();
+
     const [isSearchFocused, setIsSearchFocused] = useState(false)
     const [searchQuery, setSearchQuery] = useState('')
     const searchRef = useRef(null)
@@ -43,6 +50,19 @@ const Navbar = () => {
         setIsSearchFocused(false)
     }
 
+    
+    const handleSearch = async (e) => {
+		e.preventDefault();
+		try {
+			await fetchVideosBySearch(searchQuery);
+            navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+            setIsSearchFocused(false);
+		} catch (err) {
+			console.error('Error searching videos: ' + err);
+            toast.error('Could not search videos. Please try again.');
+		}
+    }
+
     return (
         <Disclosure as="nav" className="shadow-sm">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -75,21 +95,24 @@ const Navbar = () => {
                         { user ? (
                             <>
                                 <div className="relative" ref={searchRef}>
-                                    <input
-                                        type="text"
-                                        placeholder="Search..."
-                                        value={searchQuery}
-                                        onChange={(e) => setSearchQuery(e.target.value)}
-                                        onFocus={() => setIsSearchFocused(true)}
-                                        className="hidden md:block w-64 px-4 py-2 rounded-full border border-gray-300 text-white focus:outline-none focus:border-purple-500"
-                                    />
-                                    <Link to="/search" className="absolute right-3 top-1/2 -translate-y-1/2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-gray-500">
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-                                        </svg>
-                                    </Link>
+                                    <form onSubmit={handleSearch}>
+                                        <input
+                                            type="text"
+                                            placeholder="Search..."
+                                            value={searchQuery}
+                                            onChange={(e) => setSearchQuery(e.target.value)}
+                                            onFocus={() => setIsSearchFocused(true)}
+                                            className="hidden md:block w-64 px-4 py-2 rounded-full border border-gray-300 text-white focus:outline-none focus:border-purple-500"
+                                        />
+                                        <button type="submit" className="absolute right-3 top-1/2 -translate-y-1/2">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-gray-500">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                                            </svg>
+                                        </button>
+                                    </form>
+
                                     
-                                    {/* Search Card with Animation */}
+                                    {/* Search Card with Animation
                                     <AnimatePresence>
                                         {isSearchFocused && (
                                             <motion.div
@@ -107,6 +130,7 @@ const Navbar = () => {
                                             </motion.div>
                                         )}
                                     </AnimatePresence>
+                                    */}
                                 </div>
 
                                 {/* Watch LIst */}

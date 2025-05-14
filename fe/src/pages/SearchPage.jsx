@@ -1,6 +1,12 @@
-import React from 'react'
+import React from 'react';
+
+import { useVideoStore } from '../stores/useVideoStore';
+
+import VideoThumbnail from '../components/VideoThumbnail';
 
 const SearchPage = () => {
+    const { searchResults } = useVideoStore();
+
     return (
         <div>
             <div className="relative">
@@ -15,12 +21,20 @@ const SearchPage = () => {
                     }}
                 ></div>
 
-                {/* Content */}
-                <div className="relative h-screen z-20 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
+                {/* Search Results */}
+                <div className="relative h-screen z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
                     <div>
-                        <h1 className="text-xl font-bold text-white mb-6 leading-[1.1]">
-                            Search results for "2GOILAYS"
+                        <h1 className="text-2xl font-bold text-white mb-6 leading-[1.1]">
+                            Search Results ({searchResults.length})
                         </h1>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-2">
+                        {searchResults.map(video => {
+                            return (
+                                <VideoThumbnail key={video.id} videoId={video.id} title={video.title} description={video.description} url={video.url} thumbnailUrl={video.thumbnailUrl} />
+                            )
+                        })}
                     </div>
                 </div>
             </div>

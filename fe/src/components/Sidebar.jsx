@@ -23,7 +23,7 @@ const Sidebar = () => {
                                 <span className="text-sm text-gray-400">1,000,000 Views</span>
                                 <div className="flex gap-2">
                                     <StarIcon className="w-3" />
-                                    <span className="text-sm text-gray-400">{video.averageRating}</span>
+                                    <span className="text-sm text-gray-400">{video.averageRating?.toFixed(1)}</span>
                                 </div>
                             </div>
                         </li>

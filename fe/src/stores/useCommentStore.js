@@ -4,7 +4,8 @@ import toast from "react-hot-toast";
 
 export const useCommentStore = create((set) => ({
 	comments: [],
-    comment: [],
+    videoComments: [],
+	comment: [],
 	loadingComment: false,
 
 	setComments: (comments) => set({ comments }),
@@ -34,17 +35,28 @@ export const useCommentStore = create((set) => ({
 		}
 	},
 
+	fetchComment: async (id) => {
+		set({ loading: true });
+		try {
+			const res = await axios.get(`http://localhost:8080/api/comments/${id}`, { withCredentials: true });
+			set({ comment: res.data, loadingComment: false });
+		} catch (error) {
+			set({ error: "Failed to fetch comment.", loadingComment: false });
+			toast.error(error.response.data.error || "Failed to fetch comment.");
+		}
+	},
+
     fetchCommentByVideo: async (id) => {
 		set({ loading: true });
 		try {
 			const res = await axios.get(`http://localhost:8080/api/comments/video/${id}`, { withCredentials: true });
-			set({ comment: res.data, loadingComment: false });
+			set({ videoComments: res.data, loadingComment: false });
 		} catch (error) {
 			set({ error: "Failed to fetch comment by video.", loadingComment: false });
 			toast.error(error.response.data.error || "Failed to fetch comment by video.");
 		}
 	},
-
+	
 	deleteComment: async (commentId) => {
 		set({ loadingComment: true });
 		try {

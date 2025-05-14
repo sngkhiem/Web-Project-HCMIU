@@ -12,8 +12,8 @@ const VideoThumbnail = ({videoId, title, description, url, thumbnailUrl}) => {
                 />
 
                 {/* Black Overlay on Hover */}
-                <div className="absolute inset-0 p-3 bg-black text-white opacity-0 hover:opacity-80 transition-opacity">
-                    <h2 className="text-2xl font-bold mb-2">{title}</h2>
+                <div className="absolute inset-0 px-5 py-3 bg-black text-white opacity-0 hover:opacity-80 transition-opacity">
+                    <h2 className="text-2xl font-bold mb-2 line-clamp-2">{title}</h2>
                     <p className="line-clamp-3">{description}</p>
                 </div>
             </a>
