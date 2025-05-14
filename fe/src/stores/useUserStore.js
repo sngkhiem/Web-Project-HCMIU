@@ -5,6 +5,7 @@ import Cookies from 'js-cookie';
 
 export const useUserStore = create((set) => ({
 	user: null,
+	userInfo: [],
 	token: null,
 	loading: false,
 	checkingAuth: false,
@@ -53,19 +54,21 @@ export const useUserStore = create((set) => ({
 		}
 	},
 
+	fetchUser: async (id) => {
+		set({ loading: true });
+		try {
+			const res = await axios.get(`http://localhost:8080/api/users/${id}`, { withCredentials: true });
+			set({ userInfo: res.data, loading: false });
+		} catch (error) {
+			set({ error: "Failed to fetch user", loading: false });
+			toast.error(error.response.data.error || "Failed to fetch user");
+		}
+	},
+
 	updateProfile: async (data) => {
 		set({ isUpdatingProfile: true });
 		try {
-			const token = Cookies.get('jwt');
-			const res = await axios.put("http://localhost:8080/api/uploads/avatar", 
-				data,
-				{
-					headers: {
-						Authorization: `Bearer ${token}`,
-					}
-				},
-			);
-			set({ user: res.data });
+			const res = await axios.put("http://localhost:8080/api/uploads/avatar", data, { withCredentials: true });
 			toast.success("Profile updated successfully");
 		} catch (error) {
 			toast.error(error.response?.data?.message);

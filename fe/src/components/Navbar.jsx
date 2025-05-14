@@ -36,7 +36,7 @@ const Navbar = () => {
         return () => {
             document.removeEventListener('mousedown', handleClickOutside)
         }
-    }, [])
+    }, []);
 
     const handleMovieClick = (movie) => {
         // Handle movie selection
@@ -151,7 +151,7 @@ const Navbar = () => {
                                             <span className="sr-only">Open user menu</span>
                                             <img
                                                 alt=""
-                                                src={user.avatar || "./assets/avatar.png"}
+                                                src={user.avatar || "../assets/avatar.png"}
                                                 className="size-8 rounded-full"
                                             />
                                         </MenuButton>

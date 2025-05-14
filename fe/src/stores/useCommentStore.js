@@ -74,7 +74,7 @@ export const useCommentStore = create((set) => ({
 	createReply: async (replyData) => {
 		set({ loadingComment: true });
 		try {
-			const res = await axios.post("http://localhost:8080/api/replies", replyData, { withCredentials: true });
+			const res = await axios.post("http://localhost:8080/api/comments", replyData, { withCredentials: true });
 			set((prevState) => ({
 				// Code here
 				loadingComment: false,

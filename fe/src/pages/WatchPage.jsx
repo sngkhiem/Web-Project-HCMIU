@@ -29,7 +29,7 @@ const WatchPage = () => {
     const [newComment, setNewComment] = useState('')
     const [newReply, setNewReply] = useState('')
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-    const [toggleReplies, setToggleReplies] = useState(false);
+    const [toggleReplies, setToggleReplies] = useState(null);
     const [replyToComment, setReplyToComment] = useState(null);
 
     useEffect(() => {
@@ -109,13 +109,12 @@ const WatchPage = () => {
     return (
         <div className="" >
             <div className="lg:flex">
-                <div className="relative flex flex-col flex-1 gap-y-5 px-5 lg:px-24 py-6 bg-black">               
+                <div className="relative flex flex-col flex-1 gap-y-5 px-5 lg:px-24 py-6 bg-pm-gray">               
                     {/* Video */}
                     {!loading ? (
                         <div className="relative w-full max-w-[1920px] pb-[56.25%] h-0 aspect-video">
                             <video className="absolute inset-0 w-full h-full" controls>
                                 <source src={`../videos/${video.url}`} type="video/mp4" />
-                                Your browser does not support the video tag.
                             </video>
                         </div>
                     ) : (
@@ -124,20 +123,20 @@ const WatchPage = () => {
     
                     <div className="flex flex-col gap-4 text-white">
                         <h1 className="text-2xl font-semibold">{video.title}</h1>
-                        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-2">
+                        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                             {/* Video Interactions */}
-                            <div className="flex items-center gap-2">
-                                <button className="p-3 bg-primary-gray hover:bg-purple-700 transition-colors rounded-lg cursor-pointer">
+                            <div className="flex items-center justify-between gap-5">
+                                <button className="p-2 bg-se-gray hover:bg-purple-700 transition-colors rounded-full cursor-pointer">
                                     <BookmarkIcon className="h-5"/>
                                 </button>
 
-                                <form onSubmit={handleSubmitRating} className="flex gap-5">
-                                    <select value={userRating} onChange={(e) => setUserRating(e.target.value)} className="bg-primary-gray px-2 cursor-pointer">
+                                <form onSubmit={handleSubmitRating} className="flex gap-2">
+                                    <select value={userRating} onChange={(e) => setUserRating(e.target.value)} className="p-2 bg-se-gray rounded-full cursor-pointer">
                                         {[1, 2, 3, 4, 5].map((num) => (
                                             <option key={num} value={num} className="cursor-pointer">{num} ⭐</option>
                                         ))}
                                     </select>
-                                    <button type="submit" className="bg-primary-gray px-5 py-2 rounded-lg text-white text-lg flex items-center gap-2 hover:bg-pm-purple-hover transition-colors cursor-pointer">Submit Rating</button>
+                                    <button type="submit" className="bg-se-gray px-3 py-2 text-md rounded-full hover:bg-pm-purple-hover transition cursor-pointer">Submit Rating</button>
                                 </form>
                             </div>
 
@@ -153,16 +152,16 @@ const WatchPage = () => {
                     </div>
 
                     {/* Details Section */}
-                    <div className="bg-primary-gray rounded-sm p-3">
+                    <div className="bg-se-gray text-white rounded-lg p-3">
                         {/* Category */}
-                        <div className="flex items-center gap-2">
-                            <span className="text-white font-semibold">{video.uploadDate}</span>
-                            <div className="px-3 py-1 bg-gray-100 rounded-full">
-                                <span className="font-semibold">{video.categoryName}</span>
+                        <div className="flex items-center gap-3 font-semibold">
+                            <span>{video.uploadDate}</span>
+                            <div className="px-3 py-1 bg-pm-purple rounded-full">
+                                <span>{video.categoryName}</span>
                             </div>
                         </div>
 
-                        <p className="mt-2 text-white">{video.description}</p>
+                        <p className="mt-2">{video.description}</p>
                     </div>
 
                     {/* Comment Section */}
@@ -171,8 +170,12 @@ const WatchPage = () => {
                             <span className="text-white text-lg font-semibold">{videoComments.length} Comment{videoComments.length > 1 ? 's' : ''}</span>
                         </div>
 
-                        <div>
-                            <form onSubmit={handleSubmitComment} className="space-y-6">
+                        <div className="flex gap-3 mb-5">
+                            <div>
+                                <img src={"../assets/avatar.png"} alt="Avatar" className="h-12 w-12 object-cover rounded-full" />
+                            </div>
+                            
+                            <form onSubmit={handleSubmitComment} className="flex-1 space-y-6">
                                 <div>
                                     <input
                                         id="newComment"
@@ -198,7 +201,7 @@ const WatchPage = () => {
                                     {/* Emoji Picker & Buttons */}
                                     {isFocusedComment && (
                                         <div className="flex items-center justify-between">
-                                            <div className="flex items-center p-2 rounded-full hover:bg-primary-gray transition-colors">
+                                            <div className="flex items-center p-2 rounded-full hover:bg-se-gray transition-colors">
                                                 <button
                                                     type="button"
                                                     onClick={() => setShowEmojiPicker(!showEmojiPicker)}
@@ -218,7 +221,7 @@ const WatchPage = () => {
                                                 <button
                                                     type="button"
                                                     onClick={handleCancel}
-                                                    className="justify-center rounded-md px-5 py-1.5 text-sm/6 font-semibold text-white hover:bg-primary-gray transition-colors cursor-pointer"
+                                                    className="justify-center rounded-md px-5 py-1.5 text-sm/6 font-semibold text-white hover:bg-se-gray transition-colors cursor-pointer"
                                                 >
                                                     Cancel
                                                 </button>
@@ -249,7 +252,7 @@ const WatchPage = () => {
                                     {/* User Details */}
                                     <div className="flex gap-3 items-center text-md">
                                         <h3 className="font-semibold">{comment.username}</h3>
-                                        <span className="text-gray-600">{formatDate(comment.datePosted)}</span>
+                                        <span className="text-sm text-gray-600">{formatDate(comment.datePosted)}</span>
                                     </div>
 
                                     {/* Content */}
@@ -272,7 +275,7 @@ const WatchPage = () => {
                                             </button>
                                         </div>
                                         {/* Reply Button */}
-                                        <button className="px-3 py-1 text-sm font-semibold text-white hover:bg-primary-gray rounded-lg cursor-pointer" onClick={() =>setReplyToComment(replyToComment === comment.id ? null : comment.id)}>
+                                        <button className="px-3 py-1 text-sm font-semibold text-white hover:bg-se-gray rounded-lg cursor-pointer" onClick={() =>setReplyToComment(replyToComment === comment.id ? null : comment.id)}>
                                             Reply
                                         </button>
                                     </div>
@@ -350,13 +353,13 @@ const WatchPage = () => {
 
                                     {/* Number of Replies */}
                                     {comment.replies?.length > 0 && (
-                                        <button className="px-2 py-1 my-2 flex w-fit items-center justify-center gap-2 hover:bg-blue-100 rounded-full transition-colors cursor-pointer" onClick={() => setToggleReplies(!toggleReplies)}>
-                                            {toggleReplies ? <ChevronUpIcon className="h-5 text-blue-400" /> : <ChevronDownIcon className="h-5 text-blue-400" />}
-                                            <span className="text-blue-400">{comment.replies.length} Replies</span>
+                                        <button className="px-2 py-1 mt-2 flex w-fit items-center justify-center gap-2 hover:bg-pm-purple-hover rounded-full transition-colors cursor-pointer" onClick={() =>setToggleReplies(toggleReplies === comment.id ? null : comment.id)}>
+                                            {toggleReplies === comment.id ? <ChevronUpIcon className="h-5 text-pm-purple" /> : <ChevronDownIcon className="h-5 text-pm-purple" />}
+                                            <span className="text-pm-purple">{comment.replies.length} Replies</span>
                                         </button>
                                     )}
 
-                                    {toggleReplies && (
+                                    {toggleReplies === comment.id && (
                                         <div className="flex flex-col gap-2">
                                             {comment.replies.map((reply) => {
                                                 return (
