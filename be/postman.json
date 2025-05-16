@@ -239,8 +239,20 @@
               "raw": "{{baseUrl}}/api/videos",
               "host": ["{{baseUrl}}"],
               "path": ["api", "videos"]
+            },            "description": "Create a new video"
+          },
+          "response": []
+        },
+        {
+          "name": "View Video",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/videos/1/view",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "videos", "1", "view"]
             },
-            "description": "Create a new video"
+            "description": "Increment the view count for a video"
           },
           "response": []
         }
