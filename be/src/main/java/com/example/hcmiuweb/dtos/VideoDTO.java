@@ -13,10 +13,10 @@ public class VideoDTO {
     private String thumbnailUrl;
     private Long uploaderId;
     private String uploaderUsername;
-    private Long categoryId;
-    private String categoryName;
+    private Long categoryId;    private String categoryName;
     private Double averageRating;
     private Integer ratingCount;
+    private Long viewCount;
 
     // Default constructor
     public VideoDTO() {}
@@ -53,11 +53,12 @@ public class VideoDTO {
     public void setCategoryName(String categoryName) { this.categoryName = categoryName; }
 
     public Double getAverageRating() { return averageRating; }
-    public void setAverageRating(Double averageRating) { this.averageRating = averageRating; }
-
-    public Integer getRatingCount() { return ratingCount; }
+    public void setAverageRating(Double averageRating) { this.averageRating = averageRating; }    public Integer getRatingCount() { return ratingCount; }
     public void setRatingCount(Integer ratingCount) { this.ratingCount = ratingCount; }
 
     public String getThumbnailUrl() { return thumbnailUrl; }
-    public void setThumbnailUrl(String thumbnailUrl) { this.thumbnailUrl = thumbnailUrl;}
+    public void setThumbnailUrl(String thumbnailUrl) { this.thumbnailUrl = thumbnailUrl; }
+    
+    public Long getViewCount() { return viewCount; }
+    public void setViewCount(Long viewCount) { this.viewCount = viewCount; }
 }
