@@ -2,6 +2,7 @@ package com.example.hcmiuweb.entities;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -34,6 +35,10 @@ public class Comment {
     // Optional: One-to-Many for replies
     @OneToMany(mappedBy = "parentComment", cascade = CascadeType.ALL)
     private Set<Comment> replies;
+    
+    // One-to-Many for ratings
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<CommentRating> ratings = new HashSet<>();
 
     // Constructors
     public Comment() {}
@@ -87,12 +92,38 @@ public class Comment {
     }
     public void setParentComment(Comment parentComment) {
         this.parentComment = parentComment;
-    }
-
-    public Set<Comment> getReplies() {
+    }    public Set<Comment> getReplies() {
         return replies;
     }
     public void setReplies(Set<Comment> replies) {
         this.replies = replies;
+    }
+    
+    public Set<CommentRating> getRatings() {
+        return ratings;
+    }
+    
+    public void setRatings(Set<CommentRating> ratings) {
+        this.ratings = ratings;
+    }
+    
+    // Helper methods for ratings
+    public void addRating(CommentRating rating) {
+        ratings.add(rating);
+        rating.setComment(this);
+    }
+    
+    public void removeRating(CommentRating rating) {
+        ratings.remove(rating);
+        rating.setComment(null);
+    }
+    
+    // Get likes and dislikes counts
+    public long getLikesCount() {
+        return ratings.stream().filter(r -> r.getRating() > 0).count();
+    }
+    
+    public long getDislikesCount() {
+        return ratings.stream().filter(r -> r.getRating() < 0).count();
     }
 }

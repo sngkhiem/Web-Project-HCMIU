@@ -52,7 +52,7 @@ public class CommentController {
                 .body(new MessageResponse("Error: " + e.getMessage()));
         }
     }
-      @GetMapping
+    @GetMapping
     public ResponseEntity<?> getAllComments() {
         try {
             List<CommentResponse> comments = commentService.getAllComments();

@@ -35,7 +35,8 @@ public class CommentService {
         this.userRepository = userRepository;
         this.videoRepository = videoRepository;
         this.notificationService = notificationService;
-    }    @Transactional
+    }    
+    @Transactional
     public CommentResponse addComment(CommentRequest commentRequest) {
         User user = userRepository.findById(commentRequest.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found with ID: " + commentRequest.getUserId()));

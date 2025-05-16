@@ -16,12 +16,12 @@ public class CommentResponse {
     private String username;
     private String userAvatarUrl;
     private Long parentCommentId;
+    private long likes;
+    private long dislikes;
     private List<CommentResponse> replies = new ArrayList<>();
 
     public CommentResponse() {
-    }
-
-    public CommentResponse(Comment comment) {
+    }    public CommentResponse(Comment comment) {
         this.id = comment.getId();
         this.content = comment.getContent();
         this.datePosted = comment.getDatePosted();
@@ -29,6 +29,8 @@ public class CommentResponse {
         this.userId = comment.getUser().getId();
         this.username = comment.getUser().getUsername();
         this.userAvatarUrl = comment.getUser().getAvatar(); // Changed from getAvatarUrl() to getAvatar()
+        this.likes = comment.getLikesCount();
+        this.dislikes = comment.getDislikesCount();
         if (comment.getParentComment() != null) {
             this.parentCommentId = comment.getParentComment().getId();
         }
@@ -108,9 +110,23 @@ public class CommentResponse {
 
     public List<CommentResponse> getReplies() {
         return replies;
-    }
-
-    public void setReplies(List<CommentResponse> replies) {
+    }    public void setReplies(List<CommentResponse> replies) {
         this.replies = replies;
+    }
+    
+    public long getLikes() {
+        return likes;
+    }
+    
+    public void setLikes(long likes) {
+        this.likes = likes;
+    }
+    
+    public long getDislikes() {
+        return dislikes;
+    }
+    
+    public void setDislikes(long dislikes) {
+        this.dislikes = dislikes;
     }
 }
