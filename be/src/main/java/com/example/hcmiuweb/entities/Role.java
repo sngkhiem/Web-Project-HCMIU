@@ -5,22 +5,21 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "roles")
 public class Role {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "role_id")
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "role_name", nullable = false, unique = true)
     private String roleName;
 
-    // Constructors
     public Role() {}
 
     public Role(String roleName) {
         this.roleName = roleName;
     }
 
-    // Getters & Setters
     public Long getId() {
         return id;
     }
