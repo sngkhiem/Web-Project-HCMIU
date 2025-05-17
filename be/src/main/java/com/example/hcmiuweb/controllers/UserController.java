@@ -1,5 +1,6 @@
 package com.example.hcmiuweb.controllers;
 
+import com.example.hcmiuweb.entities.Role;
 import com.example.hcmiuweb.entities.User;
 import com.example.hcmiuweb.services.RoleService;
 import com.example.hcmiuweb.services.UserService;
@@ -8,30 +9,32 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @RestController
-@CrossOrigin(origins = {"http://localhost:5173", "http://172.18.0.3:5173"})
 @RequestMapping("/api/users")
 public class UserController {
     private final UserService userService;
     private final RoleService roleService;
 
-    public UserController(UserService userService, RoleService roleService){
+    public UserController(UserService userService, RoleService roleService) {
         this.userService = userService;
         this.roleService = roleService;
     }
 
     @GetMapping("/email/{email}")
-    public ResponseEntity<User> findByEmail(@PathVariable String email){
+    public ResponseEntity<User> findByEmail(@PathVariable String email) {
         return userService.findByEmail(email)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping
-    public List<User> findAllUsers() {
-        return userService.findAllUsers();
+    public ResponseEntity<List<User>> findAllUsers() {
+        List<User> users = userService.findAllUsers();
+        return ResponseEntity.ok(users);
     }
 
     @GetMapping("/{id}")
@@ -43,37 +46,37 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<User> createUser(@RequestBody User user) {
-        // Set default values for any missing fields
         if (user.getPassword() == null || user.getPassword().isEmpty()) {
-            return ResponseEntity.badRequest()
-                .body(null); // Return 400 Bad Request if password is missing
+            return ResponseEntity.badRequest().build();
         }
-
-        // Set registration date if not provided
         if (user.getRegistrationDate() == null) {
             user.setRegistrationDate(LocalDateTime.now());
         }
-        // Set default avatar if not provided
-         if (user.getAvatar() == null || user.getAvatar().isEmpty()) {
-             user.setAvatar("/resources/static/images/avatars/default-avatar.jpg");
-         }
-        
-        // Save user
-        User savedUser = userService.createUser(user);
-
-         // Fetch the complete role data
-        if (savedUser.getRole() != null && savedUser.getRole().getId() != null) {
-            roleService.findRoleById(savedUser.getRole().getId())
-                    .ifPresent(savedUser::setRole);
+        if (user.getAvatar() == null || user.getAvatar().isEmpty()) {
+            user.setAvatar("/resources/static/images/avatars/default-avatar.jpg");
         }
 
-        return ResponseEntity.ok(savedUser);
+        Set<Role> resolvedRoles = new HashSet<>();
+        if (user.getRoles() == null || user.getRoles().isEmpty()) {
+            roleService.findRoleByName("USER").ifPresent(resolvedRoles::add);
+        } else {
+            for (Role r : user.getRoles()) {
+                if (r.getId() != null) {
+                    roleService.findRoleById(r.getId()).ifPresent(resolvedRoles::add);
+                } else if (r.getRoleName() != null) {
+                    roleService.findRoleByName(r.getRoleName()).ifPresent(resolvedRoles::add);
+                }
+            }
+        }
+        user.setRoles(resolvedRoles);
+        User savedUser = userService.createUser(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleException(Exception e) {
-        e.printStackTrace(); // Log the error
+        e.printStackTrace();
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-            .body("Error processing request: " + e.getMessage());
+                .body("Error processing request: " + e.getMessage());
     }
 }

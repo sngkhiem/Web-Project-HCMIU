@@ -68,7 +68,7 @@ public class SecurityConfig {
                 auth.requestMatchers("/api/auth/**").permitAll()
                     .requestMatchers("/api/test/**").permitAll()
                     .requestMatchers("/api/videos/**").permitAll()
-                    // .requestMatchers(HttpMethod.GET, "/api/comments/**").permitAll()
+                        .requestMatchers("/api/otp/**").permitAll()
                     .anyRequest().authenticated()
             );
         
