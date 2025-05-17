@@ -56,19 +56,20 @@ public class UserController {
             user.setAvatar("/resources/static/images/avatars/default-avatar.jpg");
         }
 
-        Set<Role> resolvedRoles = new HashSet<>();
-        if (user.getRoles() == null || user.getRoles().isEmpty()) {
-            roleService.findRoleByName("USER").ifPresent(resolvedRoles::add);
+        Role resolvedRole;
+        if (user.getRole() == null) {
+            resolvedRole = roleService.findRoleByName("ROLE_USER")
+                    .orElseThrow(() -> new RuntimeException("Default role not found"));
         } else {
-            for (Role r : user.getRoles()) {
-                if (r.getId() != null) {
-                    roleService.findRoleById(r.getId()).ifPresent(resolvedRoles::add);
-                } else if (r.getRoleName() != null) {
-                    roleService.findRoleByName(r.getRoleName()).ifPresent(resolvedRoles::add);
-                }
+            if (user.getRole().getId() != null) {
+                resolvedRole = roleService.findRoleById(user.getRole().getId())
+                        .orElseThrow(() -> new RuntimeException("Role not found"));
+            } else {
+                resolvedRole = roleService.findRoleByName(user.getRole().getRoleName())
+                        .orElseThrow(() -> new RuntimeException("Role not found"));
             }
         }
-        user.setRoles(resolvedRoles);
+        user.setRole(resolvedRole);
         User savedUser = userService.createUser(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
     }
