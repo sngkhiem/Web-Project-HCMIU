@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/auth")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class AuthController {
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
@@ -52,7 +53,7 @@ public class AuthController {
     @Autowired
     JwtUtils jwtUtils;
 
-    @GetMapping("/me")
+    @GetMapping(value = "/me", produces = "application/json")
     public ResponseEntity<?> getCurrentUser() {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -74,7 +75,7 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/signin")
+    @PostMapping(value = "/signin", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest, HttpServletResponse response) {
         try {
             logger.info("Authentication attempt for user: {}", loginRequest.getUsername());
@@ -135,26 +136,21 @@ public class AuthController {
                     signUpRequest.getEmail(),
                     signUpRequest.getPassword(),
                     LocalDateTime.now(),
-                    signUpRequest.getAvatar(),
+                    "/resources/static/images/avatars/default-avatar.jpg",
                     null);
 
             Set<String> strRoles = signUpRequest.getRole();
-            Set<Role> roles = new HashSet<>();
+            Role role;
 
             if (strRoles == null) {
-                Role userRole = roleRepository.findByRoleName("ROLE_USER")
+                role = roleRepository.findByRoleName("ROLE_USER")
                         .orElseThrow(() -> new RuntimeException("Error: Role not found."));
-                roles.add(userRole);
             } else {
-                strRoles.forEach(role -> {
-                    Role found = roleRepository.findByRoleName(role)
-                            .orElseThrow(() -> new RuntimeException("Error: Role not found."));
-                    roles.add(found);
-                });
+                role = roleRepository.findByRoleName(strRoles.iterator().next())
+                        .orElseThrow(() -> new RuntimeException("Error: Role not found."));
             }
 
-            // For simplicity, assign the first role (should update entity to List<Role> if multiple)
-            user.setRole(roles.iterator().next());
+            user.setRole(role);
             user.setPassword(encoder.encode(user.getPassword()));
             userRepository.save(user);
 

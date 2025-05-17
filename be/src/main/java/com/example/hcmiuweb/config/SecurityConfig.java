@@ -2,6 +2,7 @@ package com.example.hcmiuweb.config;
 
 import com.example.hcmiuweb.config.jwt.AuthEntryPointJwt;
 import com.example.hcmiuweb.config.jwt.AuthTokenFilter;
+import com.example.hcmiuweb.config.jwt.JwtUtils;
 import com.example.hcmiuweb.services.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
