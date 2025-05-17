@@ -37,12 +37,20 @@ public class VideoController {
     @GetMapping
     public List<VideoDTO> getAllVideos() {
         return videoService.findAllVideosWithRatings();
-    }
-
-    @GetMapping("/{id}")
+    }        @GetMapping("/{id}")
     public ResponseEntity<VideoDTO> getVideoById(@PathVariable Long id) {
         return videoService.findVideoByIdWithRating(id)
-                .map(ResponseEntity::ok)
+                .map(videoDTO -> {
+                    try {
+                        // Increment the view count after finding the video
+                        VideoDTO updatedVideo = videoService.incrementViewCount(id);
+                        return ResponseEntity.ok(updatedVideo);
+                    } catch (Exception e) {
+                        e.printStackTrace(); // Log the exception
+                        // Return the original video if view count increment fails
+                        return ResponseEntity.ok(videoDTO);
+                    }
+                })
                 .orElse(ResponseEntity.notFound().build());
     }
 
@@ -163,9 +171,7 @@ public class VideoController {
                     return ResponseEntity.ok(videoDTO);
                 })
                 .orElse(ResponseEntity.notFound().build());
-    }
-
-    @DeleteMapping("/{id}")
+    }    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteVideo(@PathVariable Long id) {
         return videoService.findVideoById(id)
                 .map(video -> {
@@ -173,6 +179,16 @@ public class VideoController {
                     return ResponseEntity.ok().<Void>build();
                 })
                 .orElse(ResponseEntity.notFound().build());
+    }
+    
+    @PostMapping("/{id}/view")
+    public ResponseEntity<VideoDTO> viewVideo(@PathVariable Long id) {
+        try {
+            VideoDTO videoDTO = videoService.incrementViewCount(id);
+            return ResponseEntity.ok(videoDTO);
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @ExceptionHandler(Exception.class)

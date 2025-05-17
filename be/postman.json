@@ -239,8 +239,20 @@
               "raw": "{{baseUrl}}/api/videos",
               "host": ["{{baseUrl}}"],
               "path": ["api", "videos"]
+            },            "description": "Create a new video"
+          },
+          "response": []
+        },
+        {
+          "name": "View Video",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/videos/1/view",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "videos", "1", "view"]
             },
-            "description": "Create a new video"
+            "description": "Increment the view count for a video"
           },
           "response": []
         }
@@ -1115,6 +1127,80 @@
               "path": ["api", "ratings", "user", "1", "video", "1"]
             },
             "description": "Get a user's rating for a specific video"
+          },
+          "response": []
+        }
+      ]
+    },    {
+      "name": "Comment Ratings",
+      "description": "Endpoints for comment ratings management",
+      "item": [
+        {
+          "name": "Rate a Comment",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"commentId\": 1,\n    \"userId\": null,\n    \"rating\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/comment-ratings",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "comment-ratings"]
+            },
+            "description": "Rate a comment (1 for like, -1 for dislike). The userId will be automatically set to the authenticated user's ID."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Comment Rating Counts",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/comment-ratings/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "comment-ratings", "1"]
+            },
+            "description": "Get like and dislike counts for a comment, and the current user's rating if authenticated"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Comment Rating",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{jwt_token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/comment-ratings/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "comment-ratings", "1"]
+            },
+            "description": "Delete a user's rating for a specific comment. The user ID is determined from the authenticated user."
           },
           "response": []
         }

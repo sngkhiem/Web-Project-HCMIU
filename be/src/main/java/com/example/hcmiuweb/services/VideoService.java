@@ -140,10 +140,10 @@ public class VideoService {
         dto.setId(video.getId());
         dto.setTitle(video.getTitle());
         dto.setDescription(video.getDescription());
-        dto.setUploadDate(video.getUploadDate());
-        dto.setDuration(video.getDuration());
+        dto.setUploadDate(video.getUploadDate());        dto.setDuration(video.getDuration());
         dto.setUrl(video.getUrl());
         dto.setThumbnailUrl(video.getThumbnailUrl()); // Added this line to include thumbnailUrl
+        dto.setViewCount(video.getViewCount()); // Added this line to include viewCount
 
         // Set uploader info
         if (video.getUploader() != null) {
@@ -161,8 +161,21 @@ public class VideoService {
         videoRepository.findAverageRatingByVideoId(video.getId())
                 .ifPresent(dto::setAverageRating);
 
-        dto.setRatingCount(videoRepository.countRatingsByVideoId(video.getId()));
-
-        return dto;
+        dto.setRatingCount(videoRepository.countRatingsByVideoId(video.getId()));        return dto;
+    }
+      @Transactional
+    public VideoDTO incrementViewCount(Long videoId) {
+        return videoRepository.findById(videoId)
+                .map(video -> {
+                    // Increment the view count
+                    if (video.getViewCount() == null) {
+                        video.setViewCount(1L); // Initialize if null
+                    } else {
+                        video.setViewCount(video.getViewCount() + 1);
+                    }
+                    Video updatedVideo = videoRepository.save(video);
+                    return convertToDTO(updatedVideo);
+                })
+                .orElseThrow(() -> new RuntimeException("Video not found with id: " + videoId));
     }
 }

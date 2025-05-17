@@ -22,15 +22,16 @@ public class Video {
     private String description;
 
     @Column(nullable = false)
-    private LocalDateTime uploadDate;
-
-    private Integer duration; // in seconds
+    private LocalDateTime uploadDate;    private Integer duration; // in seconds
 
     @Column(nullable = false)
     private String url;
     
     @Column
     private String thumbnailUrl;
+    
+    @Column
+    private Long viewCount = 0L;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -50,9 +51,7 @@ public class Video {
     private List<Comment> comments = new ArrayList<>();
 
     // Constructors
-    public Video() {}
-
-    public Video(String title, String description, LocalDateTime uploadDate, Integer duration, String url, String thumbnailUrl, User uploader, Category category) {
+    public Video() {}    public Video(String title, String description, LocalDateTime uploadDate, Integer duration, String url, String thumbnailUrl, User uploader, Category category) {
         this.title = title;
         this.description = description;
         this.uploadDate = uploadDate;
@@ -61,6 +60,7 @@ public class Video {
         this.thumbnailUrl = thumbnailUrl;
         this.uploader = uploader;
         this.category = category;
+        this.viewCount = 0L;
     }
 
     // Getters & Setters
@@ -122,9 +122,16 @@ public class Video {
 
     public Category getCategory() {
         return category;
-    }
-    public void setCategory(Category category) {
+    }    public void setCategory(Category category) {
         this.category = category;
+    }
+    
+    public Long getViewCount() {
+        return viewCount;
+    }
+    
+    public void setViewCount(Long viewCount) {
+        this.viewCount = viewCount;
     }
 
     public Set<VideoRating> getRatings() {
