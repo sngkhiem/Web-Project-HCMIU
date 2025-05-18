@@ -4,12 +4,15 @@ import com.example.hcmiuweb.entities.Role;
 import com.example.hcmiuweb.entities.User;
 import com.example.hcmiuweb.payload.request.LoginRequest;
 import com.example.hcmiuweb.payload.request.RegisterRequest;
+import com.example.hcmiuweb.payload.request.PasswordResetRequest;
+import com.example.hcmiuweb.payload.request.NewPasswordRequest;
 import com.example.hcmiuweb.payload.response.JwtResponse;
 import com.example.hcmiuweb.payload.response.MessageResponse;
 import com.example.hcmiuweb.repositories.RoleRepository;
 import com.example.hcmiuweb.repositories.UserRepository;
 import com.example.hcmiuweb.config.jwt.JwtUtils;
 import com.example.hcmiuweb.services.UserDetailsImpl;
+import com.example.hcmiuweb.services.EmailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +34,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -52,6 +56,9 @@ public class AuthController {
 
     @Autowired
     JwtUtils jwtUtils;
+
+    @Autowired
+    private EmailService emailService;
 
     @GetMapping(value = "/me", produces = "application/json")
     public ResponseEntity<?> getCurrentUser() {
@@ -184,6 +191,57 @@ public class AuthController {
         } catch (Exception e) {
             logger.error("Logout error: {}", e.getMessage());
             return ResponseEntity.badRequest().body(new MessageResponse("Error during logout: " + e.getMessage()));
+        }
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@Valid @RequestBody PasswordResetRequest request) {
+        try {
+            logger.info("Password reset requested for email: {}", request.getEmail());
+
+            User user = userRepository.findByEmail(request.getEmail())
+                    .orElseThrow(() -> new RuntimeException("User not found with this email"));
+
+            // Generate reset token
+            String resetToken = UUID.randomUUID().toString();
+            user.setResetToken(resetToken);
+            user.setResetTokenExpiry(LocalDateTime.now().plusMinutes(15));
+            userRepository.save(user);
+
+            // Send email
+            emailService.sendPasswordResetEmail(user.getEmail(), resetToken);
+
+            logger.info("Password reset email sent to: {}", request.getEmail());
+            return ResponseEntity.ok(new MessageResponse("Password reset email sent successfully"));
+        } catch (Exception e) {
+            logger.error("Error in forgot password: {}", e.getMessage());
+            return ResponseEntity.badRequest().body(new MessageResponse("Error: " + e.getMessage()));
+        }
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@Valid @RequestBody NewPasswordRequest request) {
+        try {
+            logger.info("Password reset attempt with token");
+
+            User user = userRepository.findByResetToken(request.getToken())
+                    .orElseThrow(() -> new RuntimeException("Invalid reset token"));
+
+            if (user.getResetTokenExpiry().isBefore(LocalDateTime.now())) {
+                throw new RuntimeException("Reset token has expired");
+            }
+
+            // Update password
+            user.setPassword(encoder.encode(request.getNewPassword()));
+            user.setResetToken(null);
+            user.setResetTokenExpiry(null);
+            userRepository.save(user);
+
+            logger.info("Password reset successful for user: {}", user.getUsername());
+            return ResponseEntity.ok(new MessageResponse("Password has been reset successfully"));
+        } catch (Exception e) {
+            logger.error("Error in reset password: {}", e.getMessage());
+            return ResponseEntity.badRequest().body(new MessageResponse("Error: " + e.getMessage()));
         }
     }
 }

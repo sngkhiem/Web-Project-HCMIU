@@ -20,4 +20,17 @@ public class EmailService {
         
         emailSender.send(message);
     }
+
+    public void sendPasswordResetEmail(String to, String resetToken) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("noreply@hcmiu.edu.vn");
+        message.setTo(to);
+        message.setSubject("Password Reset Request");
+        message.setText("To reset your password, click the link below:\n\n" +
+                "http://localhost:3000/reset-password?token=" + resetToken + "\n\n" +
+                "If you did not request a password reset, please ignore this email.\n\n" +
+                "This link will expire in 15 minutes.");
+        
+        emailSender.send(message);
+    }
 } 
