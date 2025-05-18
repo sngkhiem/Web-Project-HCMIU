@@ -1,13 +1,11 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, Suspense, lazy } from 'react'
 import { Navigate, Routes, Route } from 'react-router-dom'
 import { Toaster } from "react-hot-toast";
 
 import Navbar from "./components/Navbar"
 import Footer from "./components/Footer"
 import ScrollToTop from "./components/ScrollToTop"
-import LoadingSpinner from "./components/LoadingSpinner"
 
-import HomePage from "./pages/HomePage"
 import HomePageAuth from './pages/HomePageAuth'
 import LogInPage from "./pages/LogInPage"
 import SignUpPage from "./pages/SignUpPage"
@@ -19,6 +17,9 @@ import AdminPage from './pages/AdminPage'
 import OTPVerificationPage from "./pages/OTPVerificationPage";
 
 import { useUserStore } from "./stores/useUserStore"
+
+// Lazy load components
+const HomePage = lazy(() => import('./pages/HomePage'));
 
 const App = () => {
     const { user, checkAuth, checkingAuth } = useUserStore();
@@ -58,5 +59,12 @@ const App = () => {
         </div>
     )
 }
+
+// Loading component
+const LoadingSpinner = () => (
+    <div className="h-screen w-screen flex items-center justify-center bg-black">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-pm-purple"></div>
+    </div>
+);
 
 export default App

@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import { useVideoStore } from '../stores/useVideoStore'
 
 import { StarIcon } from '@heroicons/react/24/solid';
+import OptimizedImage from './OptimizedImage';
 
 const Sidebar = () => {
     const { videos, fetchAllVideos, loading } = useVideoStore();
@@ -17,10 +18,14 @@ const Sidebar = () => {
                 {videos.map((video) => (
                     <a key={video.id} href={`/watch/${video.id}`}>
                         <li key={video.id} className="flex space-x-3 p-2 hover:bg-se-gray cursor-pointer">
-                            <img src={`../assets/${video.thumbnailUrl}`} alt={video.title} className="w-[168px] h-[94px] object-cover flex-shrink-0 rounded-lg" />
+                            <OptimizedImage 
+                                src={`../assets/${video.thumbnailUrl}`} 
+                                alt={video.title} 
+                                className="w-[168px] h-[94px] object-cover flex-shrink-0 rounded-lg" 
+                            />
                             <div>
                                 <span className="text-md font-semibold line-clamp-2">{video.title}</span>
-                                <span className="text-sm text-gray-400">1,000,000 Views</span>
+                                <span className="text-sm text-gray-400">{video.viewCount} Views</span>
                                 <div className="flex gap-2">
                                     <StarIcon className="w-3" />
                                     <span className="text-sm text-gray-400">{video.averageRating?.toFixed(1)}</span>

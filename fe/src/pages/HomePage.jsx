@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 
 import { ArrowRightIcon } from '@heroicons/react/24/solid';
 
+import OptimizedImage from '../components/OptimizedImage';
+
 const reasons = [
     {
         icon: <ArrowRightIcon className="w-8 h-8 text-rose-500" />,
@@ -26,17 +28,18 @@ const HomePage = () => {
 
     return (
         <div>
-            <div className="relative">
-                {/* Dark overlay */}
-                <div className="absolute inset-0 bg-black/60 z-10"></div>
-                
-                {/* Background image */}
-                <div 
-                    className="absolute inset-0 bg-[url('/assets/hero.jpg')] bg-cover bg-center"
-                    style={{
-                        backgroundImage: "linear-gradient(to bottom, rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('/assets/hero.jpg')"
-                    }}
-                ></div>
+            <div className="relative min-h-screen">
+                {/* Background image with overlay */}
+                <div className="fixed inset-0">
+                    <div className="absolute inset-0 bg-gray-800 animate-pulse" />
+                    <OptimizedImage
+                        src="/assets/background.jpg"
+                        alt="Background"
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-black/80" />
+                </div>
 
                 {/* Content */}
                 <div className="relative z-20 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-32 text-center">
@@ -74,7 +77,7 @@ const HomePage = () => {
                 </div>
             </div>
 
-            <div className="bg-black py-16">
+            <div className="relative z-20 bg-black py-16">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <h2 className="text-3xl font-bold text-white mb-8">Reasons to Join</h2>
                     

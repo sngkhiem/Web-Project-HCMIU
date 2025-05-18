@@ -6,44 +6,57 @@ import Cookies from 'js-cookie';
 export const useWatchListStore = create((set) => ({
 	watchList: [],
 	loading: false,
+	error: null,
 
 	setWatchList: (watchList) => set({ watchList }),
 	
-	addToWatchList: async (userId, video) => {
-        // Avoid duplicates by checking video ID
-        const exists = watchList.some(item => item.id === video.id);
-        if (exists) return;
-		set({ loading: true });
+	addToWatchList: async (userId, videoId) => {
+		set({ loading: true, error: null });
 		try {
-			const res = await axios.post(`http://localhost:8080/api/watchlist/add/${userId}`, video, { withCredentials: true });
-            set({ watchList: [...watchList, video], loading: false });
+			const response = await axios.post(
+				'http://localhost:8080/api/watchlist',
+				{ userId, videoId },
+				{ withCredentials: true }
+			);
+			set((state) => ({
+				watchList: [...state.watchList, response.data],
+				loading: false
+			}));
 		} catch (error) {
-			toast.error(error.response.data.error);
-			set({ loading: false });
+			set({ error: error.message, loading: false });
+			throw error;
 		}
 	},
 
 	fetchWatchList: async (userId) => {
-		set({ loading: true });
+		set({ loading: true, error: null });
 		try {
-			const response = await axios.get(`http://localhost:8080/api/watchlist/user/${userId}`, { withCredentials: true });
-			/*
-			const token = Cookies.get('token');
-			const response = await axios.get("http://localhost:8080/api/videos", {
-				headers: {
-					Authorization: `Bearer ${token}`,
-				}
-			});
-			*/
+			const response = await axios.get(`http://localhost:8080/api/watchlist/${userId}`, { withCredentials: true });
 			set({ watchList: response.data, loading: false });
 		} catch (error) {
-			set({ error: "Failed to fetch user's watch list", loading: false });
-			toast.error(error.response.data.error || "Failed to fetch user's watch list");
+			set({ error: error.message, loading: false });
+			throw error;
 		}
 	},
 
+	removeFromWatchList: async (userId, videoId) => {
+		set({ loading: true, error: null });
+		try {
+			await axios.delete(`http://localhost:8080/api/watchlist/${userId}/${videoId}`, { withCredentials: true });
+			set((state) => ({
+				watchList: state.watchList.filter(item => item.videoId !== videoId),
+				loading: false
+			}));
+		} catch (error) {
+			set({ error: error.message, loading: false });
+			throw error;
+		}
+	},
 
-	
+	isInWatchList: (videoId) => {
+		return useWatchListStore.getState().watchList.some(item => item.videoId === videoId);
+	},
+
 	deleteVideo: async (videoId) => {
 		set({ loading: true });
 		try {

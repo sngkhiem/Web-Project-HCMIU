@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from "react-router-dom";
 import toast from 'react-hot-toast';
 import axios from "axios";
@@ -6,8 +6,11 @@ import axios from "axios";
 import { useUserStore } from '../stores/useUserStore';
 import { useVideoStore } from '../stores/useVideoStore';
 import { useCommentStore } from '../stores/useCommentStore';
+import { useWatchListStore } from '../stores/useWatchListStore';
+import { useCommentInteractionStore } from '../stores/useCommentInteractionStore';
 
 import Sidebar from '../components/Sidebar';
+import OptimizedImage from '../components/OptimizedImage';
 import { StarIcon, ChevronUpIcon, ChevronDownIcon, TrashIcon } from '@heroicons/react/24/solid';
 import { BookmarkIcon, HandThumbUpIcon, HandThumbDownIcon, FaceSmileIcon } from '@heroicons/react/24/outline';
 
@@ -18,11 +21,16 @@ import { formatDate } from "../config/format";
 
 const WatchPage = () => {
     const { id } = useParams(); // Get video ID from URL
+    const videoRef = useRef(null);
 
     const { user } = useUserStore();
     const { video, loading, fetchVideo } = useVideoStore();
     const { videoComments, loadingComment, createComment, fetchCommentByVideo, deleteComment, createReply } = useCommentStore();
+    
+    const { addToWatchList, removeFromWatchList, isInWatchList } = useWatchListStore();
+    const { likeComment, dislikeComment, removeLike, removeDislike } = useCommentInteractionStore();
 
+    const [isVideoVisible, setIsVideoVisible] = useState(false);
     const [userRating, setUserRating] = useState(0);
     const [isFocusedComment, setIsFocusedComment] = useState(false);
     const [isFocusedReply, setIsFocusedReply] = useState(false);
@@ -31,6 +39,7 @@ const WatchPage = () => {
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [toggleReplies, setToggleReplies] = useState(null);
     const [replyToComment, setReplyToComment] = useState(null);
+    const [isInWatchListState, setIsInWatchListState] = useState(false);
 
     useEffect(() => {
         fetchVideo(id);
@@ -39,6 +48,35 @@ const WatchPage = () => {
     useEffect(() => {
         fetchCommentByVideo(id);
     }, [id, fetchCommentByVideo]);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                setIsVideoVisible(entry.isIntersecting);
+            },
+            {
+                root: null,
+                rootMargin: '50px',
+                threshold: 0.1
+            }
+        );
+
+        if (videoRef.current) {
+            observer.observe(videoRef.current);
+        }
+
+        return () => {
+            if (videoRef.current) {
+                observer.unobserve(videoRef.current);
+            }
+        };
+    }, []);
+
+    useEffect(() => {
+        if (video && user) {
+            setIsInWatchListState(isInWatchList(video.id));
+        }
+    }, [video, user, isInWatchList]);
 
     const handleSubmitRating = async (e) => {
         e.preventDefault();
@@ -106,6 +144,63 @@ const WatchPage = () => {
 		}
     }
 
+    const handleVideoPlay = () => {
+        // Implementation of handleVideoPlay function
+    };
+
+    const handleWatchListToggle = async () => {
+        try {
+            if (isInWatchListState) {
+                await removeFromWatchList(user.id, video.id);
+                toast.success('Removed from watch list');
+            } else {
+                await addToWatchList(user.id, video.id);
+                toast.success('Added to watch list');
+            }
+            setIsInWatchListState(!isInWatchListState);
+        } catch (error) {
+            toast.error(error.response?.data?.message || 'Failed to update watch list');
+        }
+    };
+
+    const handleLikeComment = async (commentId) => {
+        try {
+            const comment = videoComments.find(c => c.id === commentId);
+            if (comment.likedByUser) {
+                await removeLike(commentId, user.id);
+                toast.success('Removed like');
+            } else {
+                if (comment.dislikedByUser) {
+                    await removeDislike(commentId, user.id);
+                }
+                await likeComment(commentId, user.id);
+                toast.success('Liked comment');
+            }
+            fetchCommentByVideo(id);
+        } catch (error) {
+            toast.error('Failed to update like');
+        }
+    };
+
+    const handleDislikeComment = async (commentId) => {
+        try {
+            const comment = videoComments.find(c => c.id === commentId);
+            if (comment.dislikedByUser) {
+                await removeDislike(commentId, user.id);
+                toast.success('Removed dislike');
+            } else {
+                if (comment.likedByUser) {
+                    await removeLike(commentId, user.id);
+                }
+                await dislikeComment(commentId, user.id);
+                toast.success('Disliked comment');
+            }
+            fetchCommentByVideo(id);
+        } catch (error) {
+            toast.error('Failed to update dislike');
+        }
+    };
+
     return (
         <div className="" >
             <div className="lg:flex">
@@ -126,8 +221,12 @@ const WatchPage = () => {
                         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                             {/* Video Interactions */}
                             <div className="flex items-center justify-between gap-5">
-                                <button className="p-2 bg-se-gray hover:bg-purple-700 transition-colors rounded-full cursor-pointer">
-                                    <BookmarkIcon className="h-5"/>
+                                {/* Watch List Button */}
+                                <button 
+                                    onClick={handleWatchListToggle}
+                                    className={`p-2 ${isInWatchListState ? 'bg-pm-purple' : 'bg-se-gray'} hover:bg-purple-700 transition-colors rounded-full cursor-pointer`}
+                                >
+                                    <BookmarkIcon className={`h-5 ${isInWatchListState ? 'fill-white' : ''}`}/>
                                 </button>
 
                                 <form onSubmit={handleSubmitRating} className="flex gap-2">
@@ -142,7 +241,7 @@ const WatchPage = () => {
 
                             {/* View & Rating Count */}
                             <div className="flex gap-5 font-semibold text-lg">
-                                <span>10,000,000 Views</span>
+                                <span>{video.viewCount} Views</span>
                                 <span className="flex gap-2">
                                     <StarIcon className="w-5" />
                                     {video.averageRating?.toFixed(1)} ({video.ratingCount} Ratings)
@@ -155,7 +254,6 @@ const WatchPage = () => {
                     <div className="bg-se-gray text-white rounded-lg p-3">
                         {/* Category */}
                         <div className="flex items-center gap-3 font-semibold">
-                            <span>{video.uploadDate}</span>
                             <div className="px-3 py-1 bg-pm-purple rounded-full">
                                 <span>{video.categoryName}</span>
                             </div>
@@ -172,7 +270,11 @@ const WatchPage = () => {
 
                         <div className="flex gap-3 mb-5">
                             <div>
-                                <img src={"../assets/avatar.png"} alt="Avatar" className="h-12 w-12 object-cover rounded-full" />
+                                <OptimizedImage 
+                                    src={"../assets/avatar.png"} 
+                                    alt="Avatar" 
+                                    className="h-12 w-12 object-cover rounded-full" 
+                                />
                             </div>
                             
                             <form onSubmit={handleSubmitComment} className="flex-1 space-y-6">
@@ -246,7 +348,11 @@ const WatchPage = () => {
                         {/* Comments */}
                         {videoComments.map((comment) => (
                             <div key={comment.id} className="mb-2 flex gap-5 text-white">
-                                <img src={comment.avatar || "../assets/avatar.png"} alt={comment.username} className="h-12 w-12 object-cover rounded-full" />
+                                <OptimizedImage 
+                                    src={comment.avatar || "../assets/avatar.png"} 
+                                    alt={comment.username} 
+                                    className="h-12 w-12 object-cover rounded-full" 
+                                />
 
                                 <div className="flex flex-col gap-1">
                                     {/* User Details */}
@@ -262,16 +368,22 @@ const WatchPage = () => {
                                     <div className="flex items-center gap-3 mt-1">
                                         {/* Like Button */}
                                         <div className="flex gap-2">
-                                            <button className="cursor-pointer">
-                                                <HandThumbUpIcon className="text-white w-5 hover:scale-110 transition" />
+                                            <button 
+                                                onClick={() => handleLikeComment(comment.id)}
+                                                className={`cursor-pointer ${comment.likedByUser ? 'text-pm-purple' : 'text-white'}`}
+                                            >
+                                                <HandThumbUpIcon className="w-5 hover:scale-110 transition" />
                                             </button>
-                                            <span>0</span>
+                                            <span>{comment.likes}</span>
                                         </div>
 
                                         {/* Dislike Button */}
                                         <div className="flex gap-2">
-                                            <button className="cursor-pointer">
-                                                <HandThumbDownIcon className="text-white w-5 hover:scale-110 transition" />
+                                            <button 
+                                                onClick={() => handleDislikeComment(comment.id)}
+                                                className={`cursor-pointer ${comment.dislikedByUser ? 'text-pm-purple' : 'text-white'}`}
+                                            >
+                                                <HandThumbDownIcon className="w-5 hover:scale-110 transition" />
                                             </button>
                                         </div>
                                         {/* Reply Button */}
@@ -354,8 +466,8 @@ const WatchPage = () => {
                                     {/* Number of Replies */}
                                     {comment.replies?.length > 0 && (
                                         <button className="px-2 py-1 mt-2 flex w-fit items-center justify-center gap-2 hover:bg-pm-purple-hover rounded-full transition-colors cursor-pointer" onClick={() =>setToggleReplies(toggleReplies === comment.id ? null : comment.id)}>
-                                            {toggleReplies === comment.id ? <ChevronUpIcon className="h-5 text-pm-purple" /> : <ChevronDownIcon className="h-5 text-pm-purple" />}
-                                            <span className="text-pm-purple">{comment.replies.length} Replies</span>
+                                            {toggleReplies === comment.id ? <ChevronUpIcon className="h-5 text-white" /> : <ChevronDownIcon className="h-5 text-white" />}
+                                            <span className="text-white">{comment.replies.length} Replies</span>
                                         </button>
                                     )}
 
@@ -364,7 +476,11 @@ const WatchPage = () => {
                                             {comment.replies.map((reply) => {
                                                 return (
                                                     <div key={reply.id} className="py-1 flex gap-5">
-                                                        <img src={reply.avatar || "../assets/avatar.png"} alt={reply.username} className="h-12 w-12 object-cover rounded-full" />
+                                                        <OptimizedImage 
+                                                            src={reply.avatar || "../assets/avatar.png"} 
+                                                            alt={reply.username} 
+                                                            className="h-12 w-12 object-cover rounded-full" 
+                                                        />
 
                                                         <div className="flex flex-col gap-1">
                                                             {/* User Details */}
@@ -420,6 +536,28 @@ const WatchPage = () => {
                         ))}
                     </div>
                 </div>
+
+                {/*
+                    <div ref={videoRef} className="relative w-full max-w-[1920px] pb-[56.25%] h-0 aspect-video">
+                        {isVideoVisible && (
+                            <video 
+                                className="absolute inset-0 w-full h-full rounded-lg" 
+                                controls
+                                preload="metadata"
+                                onError={(e) => {
+                                    console.error('Video loading error:', e);
+                                    toast.error('Failed to load video. Please try again.');
+                                }}
+                            >
+                                <source 
+                                    src={`../videos/${video.url}`} 
+                                    type="video/mp4" 
+                                />
+                                Your browser does not support the video tag.
+                            </video>
+                        }
+                    </div>
+                */}
 
                 <Sidebar />
             </div>

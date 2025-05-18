@@ -1,14 +1,15 @@
 import React from 'react';
 import { Link } from "react-router-dom";
+import OptimizedImage from './OptimizedImage';
 
 const VideoThumbnail = ({videoId, title, description, url, thumbnailUrl}) => {
     return (
         <div className="max-w-96 cursor-pointer aspect-[16/9]">
             <a href={`/watch/${videoId}`} className="relative">
-                <img
+                <OptimizedImage
                     src={`./assets/${thumbnailUrl}`}
                     alt="YouTube Video Thumbnail"
-                    className="rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300"
+                    className="rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 w-full h-full object-cover"
                 />
 
                 {/* Black Overlay on Hover */}
