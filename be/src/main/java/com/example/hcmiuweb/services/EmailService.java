@@ -26,8 +26,8 @@ public class EmailService {
         message.setFrom("noreply@hcmiu.edu.vn");
         message.setTo(to);
         message.setSubject("Password Reset Request");
-        message.setText("To reset your password, click the link below:\n\n" +
-                "http://localhost:3000/reset-password?token=" + resetToken + "\n\n" +
+        message.setText("To reset your password, enter the below token in website:\n\n" +
+                 resetToken + "\n\n" +
                 "If you did not request a password reset, please ignore this email.\n\n" +
                 "This link will expire in 15 minutes.");
         
