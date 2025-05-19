@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import axios from 'axios';
+import axios from '../config/axios';
 import toast from 'react-hot-toast';
 
 export const useCommentInteractionStore = create((set) => ({
@@ -9,11 +9,7 @@ export const useCommentInteractionStore = create((set) => ({
     likeComment: async (commentId, userId) => {
         set({ loading: true, error: null });
         try {
-            const response = await axios.post(
-                'http://localhost:8080/api/comment-ratings',
-                { commentId, userId },
-                { withCredentials: true }
-            );
+            const response = await axios.post('/comment-ratings', { commentId, userId, rating: 1 }, { withCredentials: true });
             return response.data;
         } catch (error) {
             set({ error: error.message });
@@ -26,10 +22,7 @@ export const useCommentInteractionStore = create((set) => ({
     removeLike: async (commentId) => {
         set({ loading: true, error: null });
         try {
-            const response = await axios.delete(
-                `http://localhost:8080/api/comment-ratings/${commentId}`,
-                { withCredentials: true }
-            );
+            const response = await axios.delete(`/comment-ratings/${commentId}`,{ withCredentials: true });
             return response.data;
         } catch (error) {
             set({ error: error.message });

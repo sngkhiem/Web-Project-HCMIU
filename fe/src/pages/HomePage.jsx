@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import { ArrowRightIcon } from '@heroicons/react/24/solid';
-
 import OptimizedImage from '../components/OptimizedImage';
 
 const reasons = [

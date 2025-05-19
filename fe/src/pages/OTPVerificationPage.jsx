@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import axios from 'axios';
-
 import { toast } from 'react-hot-toast';
+import axios from 'axios';
 
 const OTPVerificationPage = () => {
     const navigate = useNavigate();

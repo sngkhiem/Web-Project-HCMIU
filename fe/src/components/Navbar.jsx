@@ -5,7 +5,7 @@ import SearchCard from './SearchCard'
 import OptimizedImage from './OptimizedImage'
 
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
-import { BookmarkIcon, Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
+import { LockClosedIcon, BookmarkIcon, Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 
 import { useVideoStore } from '../stores/useVideoStore';
 import { useUserStore } from "../stores/useUserStore";
@@ -134,7 +134,17 @@ const Navbar = () => {
                                     */}
                                 </div>
 
-                                {/* Watch LIst */}
+                                {/* Watch List */}
+                                <Link
+                                    to={`/admin/${user.id}`}
+                                    className="relative rounded-full bg-primary-text p-1 text-gray-400 hover:text-white focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 focus:outline-hidden"
+                                >
+                                    <span className="absolute -inset-1.5" />
+                                    <span className="sr-only">View admin dashboard</span>
+                                    <LockClosedIcon aria-hidden="true" className="size-6" />
+                                </Link>
+
+                                {/* Watch List */}
                                 <Link
                                     to={`/watchlist/${user.id}`}
                                     className="relative rounded-full bg-primary-text p-1 text-gray-400 hover:text-white focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 focus:outline-hidden"

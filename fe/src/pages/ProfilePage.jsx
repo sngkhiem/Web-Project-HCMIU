@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useUserStore } from "../stores/useUserStore";
 
 import { CameraIcon, UserIcon, EnvelopeIcon } from '@heroicons/react/24/solid';
+import OptimizedImage from '../components/OptimizedImage';
 
 const ProfilePage = () => {
     const { user, userInfo, fetchUser, isUpdatingProfile, updateProfile } = useUserStore();
@@ -19,7 +20,7 @@ const ProfilePage = () => {
         reader.onload = async () => {
             const base64Image = reader.result;
             setSelectedImg(base64Image);
-            await updateProfile({ avatar: base64Image });
+            await updateProfile({ file: base64Image });
         };
     };
 
@@ -28,9 +29,21 @@ const ProfilePage = () => {
     }, [user.id, fetchUser]);
 
     return (
-        <div className="h-screen">
-            <div className="max-w-2xl mx-auto p-4 py-8">
-                <div className="bg-base-300 rounded-xl p-6 space-y-8">
+        <div className="relative min-h-screen">
+            {/* Background image with overlay */}
+            <div className="fixed inset-0">
+                <div className="absolute inset-0 bg-gray-800 animate-pulse" />
+                    <OptimizedImage
+                        src="/assets/background.jpg"
+                        alt="Background"
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                    />
+                <div className="absolute inset-0 bg-black/80" />
+            </div>
+
+            <div className="relative z-20 max-w-2xl mx-auto p-4 py-8">
+                <div className="bg-pm-gray text-white rounded-xl p-6 space-y-8">
                     <div className="text-center">
                         <h1 className="text-2xl font-semibold ">Profile</h1>
                         <p className="mt-2">Your profile information</p>
@@ -48,13 +61,13 @@ const ProfilePage = () => {
                             htmlFor="avatar-upload"
                             className={`
                                 absolute bottom-0 right-0 
-                                bg-gray-300 hover:scale-105
+                                bg-pm-purple hover:scale-105
                                 p-2 rounded-full cursor-pointer 
                                 transition-all duration-200
                                 ${isUpdatingProfile ? "animate-pulse pointer-events-none" : ""}
                             `}
                             >
-                                <CameraIcon className="w-5 h-5 text-base-200" />
+                                <CameraIcon className="w-5 h-5" />
                                 <input
                                     type="file"
                                     id="avatar-upload"

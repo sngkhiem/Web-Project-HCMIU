@@ -75,7 +75,7 @@ const VideoCarousel = () => {
             {/* Left overlay with text */}
             <div className="absolute top-0 left-0 h-full w-full bg-gradient-to-r from-black/90 via-black/40 to-transparent z-10">
                 <div className="h-full w-1/2 flex items-center px-10 md:px-44 text-white">
-                    <div className="relative h-[600px] w-full">
+                    <div className="relative h-[200px] lg:h-[600px] w-full">
                         <div>
                             {carouselVideos.map((video, index) => (
                                 <div key={index} className={`${current === index ? 'block' : 'hidden'}`}>
@@ -91,7 +91,7 @@ const VideoCarousel = () => {
                                         ))}
                                     </ul>
 
-                                    <p className="hidden md:block text-md md:text-lg text-gray-300 mb-6 max-w-md">
+                                    <p className="hidden lg:block text-md md:text-lg text-gray-300 mb-6 max-w-md">
                                         {video.description}
                                     </p>
                                 </div>
@@ -99,7 +99,7 @@ const VideoCarousel = () => {
                         </div>
 
                         {/* Buttons and Indicators - Fixed at bottom */}
-                        <div className="absolute top-50 left-0 w-full">
+                        <div className="hidden md:block absolute top-40 lg:top-50 left-0 w-full">
                             <div className="flex items-center gap-x-2 mb-10">
                                 <Link to="#" className="flex items-center gap-x-2 bg-pm-purple hover:bg-pm-purple-hover transition-colors text-white font-semibold px-6 py-3 rounded">
                                     <PlayIcon className="w-5" />

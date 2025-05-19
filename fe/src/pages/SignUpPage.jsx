@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
-import { UserIcon, EnvelopeIcon, LockClosedIcon } from '@heroicons/react/24/outline';
-
 import { useUserStore } from "../stores/useUserStore";
 import { validateField, validateForm, hasErrors } from "../utils/validation";
+
+import { UserIcon, EnvelopeIcon, LockClosedIcon } from '@heroicons/react/24/outline';
+import OptimizedImage from '../components/OptimizedImage';
 
 const SignUpPage = () => {
     const location = useLocation();
@@ -78,17 +79,18 @@ const SignUpPage = () => {
     };
 
     return (
-        <div className="h-screen relative">
-            {/* Dark overlay */}
-            <div className="absolute inset-0 bg-black/60 z-10"></div>
-                
-            {/* Background image */}
-            <div 
-                className="absolute inset-0 bg-[url('/assets/background.jpg')] bg-cover bg-center"
-                style={{
-                    backgroundImage: "linear-gradient(to bottom, rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('/assets/background.jpg')"
-                }}
-            ></div>
+        <div className="relative min-h-screen">
+            {/* Background image with overlay */}
+            <div className="fixed inset-0">
+                <div className="absolute inset-0 bg-gray-800 animate-pulse" />
+                    <OptimizedImage
+                        src="/assets/background.jpg"
+                        alt="Background"
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                    />
+                <div className="absolute inset-0 bg-black/80" />
+            </div>
 
             <div className="relative z-20 pt-6 mx-auto max-w-sm sm:max-w-lg">
                 <div className="bg-pm-gray flex flex-col justify-center px-5 py-10 text-white rounded-lg">

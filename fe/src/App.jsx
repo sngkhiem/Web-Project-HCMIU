@@ -51,7 +51,7 @@ const App = () => {
                 <Route path="/profile" element={user ? <ProfilePage /> : <Navigate to="/" />} />
                 <Route path="/watchlist/:id" element={user ? <WatchListPage /> : <Navigate to="/" />} />
 
-                <Route path="/admin" element={<AdminPage />} />
+                <Route path="/admin/:id" element={<AdminPage />} />
             </Routes>
 
             <Footer />

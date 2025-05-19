@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react';
-import VideoCarousel from '../components/VideoCarousel';
-import VideoSection from '../components/VideoSection';
 
 import { useCategoryStore } from '../stores/useCategoryStore';
+
+import VideoCarousel from '../components/VideoCarousel';
+import VideoSection from '../components/VideoSection';
 
 const HomePageAuth = () => {
     const { categories, fetchAllCategories } = useCategoryStore();

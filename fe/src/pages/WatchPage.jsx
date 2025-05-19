@@ -151,10 +151,10 @@ const WatchPage = () => {
     const handleWatchListToggle = async () => {
         try {
             if (isInWatchListState) {
-                await removeFromWatchList(user.id, video.id);
+                await removeFromWatchList(video.id);
                 toast.success('Removed from watch list');
             } else {
-                await addToWatchList(user.id, video.id);
+                await addToWatchList(video.id);
                 toast.success('Added to watch list');
             }
             setIsInWatchListState(!isInWatchListState);
@@ -204,7 +204,7 @@ const WatchPage = () => {
     return (
         <div className="" >
             <div className="lg:flex">
-                <div className="relative flex flex-col flex-1 gap-y-5 px-5 lg:px-24 py-6 bg-pm-gray">               
+                <div className="relative flex flex-col flex-1 gap-y-5 px-5 lg:pl-24 py-6 bg-pm-gray">               
                     {/* Video */}
                     {!loading ? (
                         <div className="relative w-full max-w-[1920px] pb-[56.25%] h-0 aspect-video">

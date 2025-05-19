@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import axios from "axios";
+import axios from "../config/axios";
 import toast from "react-hot-toast";
 
 export const useCommentStore = create((set) => ({
@@ -13,7 +13,7 @@ export const useCommentStore = create((set) => ({
 	createComment: async (newComment) => {
 		set({ loadingComment: true });
 		try {
-			const res = await axios.post("http://localhost:8080/api/comments", newComment, { withCredentials: true });
+			const res = await axios.post("/comments", newComment, { withCredentials: true });
 			set((prevState) => ({
 				comments: [...prevState.comments, res.data],
 				loadingComment: false,
@@ -27,7 +27,7 @@ export const useCommentStore = create((set) => ({
 	fetchAllComments: async () => {
 		set({ loadingComment: true });
 		try {
-			const res = await axios.get("http://localhost:8080/api/comments", { withCredentials: true });
+			const res = await axios.get("/comments", { withCredentials: true });
 			set({ videos: res.data, loadingComment: false });
 		} catch (error) {
 			set({ error: "Failed to fetch comments.", loadingComment: false });
@@ -38,7 +38,7 @@ export const useCommentStore = create((set) => ({
 	fetchComment: async (id) => {
 		set({ loading: true });
 		try {
-			const res = await axios.get(`http://localhost:8080/api/comments/${id}`, { withCredentials: true });
+			const res = await axios.get(`/comments/${id}`, { withCredentials: true });
 			set({ comment: res.data, loadingComment: false });
 		} catch (error) {
 			set({ error: "Failed to fetch comment.", loadingComment: false });
@@ -49,7 +49,7 @@ export const useCommentStore = create((set) => ({
     fetchCommentByVideo: async (id) => {
 		set({ loading: true });
 		try {
-			const res = await axios.get(`http://localhost:8080/api/comments/video/${id}`, { withCredentials: true });
+			const res = await axios.get(`/comments/video/${id}`, { withCredentials: true });
 			set({ videoComments: res.data, loadingComment: false });
 		} catch (error) {
 			set({ error: "Failed to fetch comment by video.", loadingComment: false });
@@ -60,7 +60,7 @@ export const useCommentStore = create((set) => ({
 	deleteComment: async (commentId) => {
 		set({ loadingComment: true });
 		try {
-			await axios.delete(`http://localhost:8080/api/comments/${commentId}`);
+			await axios.delete(`/comments/${commentId}`);
 			set((prevComments) => ({
 				comments: prevComments.comments.filter((comment) => comment.id !== commentId),
 				loadingComment: false,
@@ -74,7 +74,7 @@ export const useCommentStore = create((set) => ({
 	createReply: async (replyData) => {
 		set({ loadingComment: true });
 		try {
-			const res = await axios.post("http://localhost:8080/api/comments", replyData, { withCredentials: true });
+			const res = await axios.post("/comments", replyData, { withCredentials: true });
 			set((prevState) => ({
 				// Code here
 				loadingComment: false,

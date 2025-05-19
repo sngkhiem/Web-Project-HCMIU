@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TrashIcon } from '@heroicons/react/24/outline';
+import { StarIcon } from '@heroicons/react/24/solid';
 import { useUserStore } from '../stores/useUserStore';
 import { useWatchListStore } from '../stores/useWatchListStore';
 import OptimizedImage from '../components/OptimizedImage';
@@ -21,7 +22,7 @@ const WatchListPage = () => {
 
     const handleRemoveFromWatchList = async (videoId) => {
         try {
-            await removeFromWatchList(user.id, videoId);
+            await removeFromWatchList(videoId);
             toast.success('Removed from watch list');
         } catch (error) {
             toast.error('Failed to remove from watch list');
@@ -56,21 +57,25 @@ const WatchListPage = () => {
                             <div key={item.id} className="flex items-center justify-between px-5 py-2 rounded-lg bg-se-gray hover:bg-pm-purple-hover transition-colors">
                                 <div 
                                     className="flex gap-3 cursor-pointer flex-1"
-                                    onClick={() => navigate(`/watch/${item.video.id}`)}
+                                    onClick={() => navigate(`/watch/${item.id}`)}
                                 >
                                     <OptimizedImage 
-                                        src={item.video.thumbnailUrl || "../assets/thumbnail.png"} 
-                                        alt={item.video.title} 
-                                        className="w-32 aspect-[16/9] object-cover rounded-lg" 
+                                        src={`../assets/${item.thumbnailUrl}`} 
+                                        alt={item.title} 
+                                        className="max-w-32 aspect-[16/9] object-cover rounded-lg" 
                                     />
                                     <div className="flex flex-col justify-center">
-                                        <span className="text-xl font-semibold">{item.video.title}</span>
-                                        <span className="text-sm text-gray-400">{item.video.viewCount} views</span>
+                                        <span className="text-xl font-semibold line-clamp-1">{item.title}</span>
+                                        <span className="flex items-center gap-2 text-sm text-gray-400">
+                                            <StarIcon className="w-3" />
+                                            {item.averageRating}
+                                        </span>
+                                        <span className="text-sm text-gray-400">{item.viewCount} views</span>
                                     </div>
                                 </div>
                                 <div>
                                     <button 
-                                        onClick={() => handleRemoveFromWatchList(item.video.id)}
+                                        onClick={() => handleRemoveFromWatchList(item.id)}
                                         className="p-2 hover:bg-red-400 rounded-full transition-colors cursor-pointer"
                                     >
                                         <TrashIcon className="w-5" />
