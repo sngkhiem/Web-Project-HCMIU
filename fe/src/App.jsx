@@ -16,6 +16,7 @@ import ProfilePage from './pages/ProfilePage'
 import WatchListPage from './pages/WatchListPage'
 import SearchPage from './pages/SearchPage'
 import AdminPage from './pages/AdminPage'
+import OTPVerificationPage from "./pages/OTPVerificationPage";
 
 import { useUserStore } from "./stores/useUserStore"
 
@@ -41,6 +42,7 @@ const App = () => {
 
                 <Route path='/signup' element={!user ? <SignUpPage /> : <Navigate to='/' />} />
                 <Route path='/login' element={!user ? <LogInPage /> : <Navigate to='/' />} />
+                <Route path='/otp-verification' element={!user ? <OTPVerificationPage /> : <Navigate to='/login' />} />
 
                 <Route path="/watch/:id" element={<WatchPage />} />
                 <Route path="/search" element={<SearchPage />} />

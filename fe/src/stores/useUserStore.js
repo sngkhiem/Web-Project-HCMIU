@@ -23,7 +23,7 @@ export const useUserStore = create((set) => ({
 		}
 	},
 
-	login: async (username, password) => {
+	login: async ({ username, password }) => {
 		set({ loading: true });
 		try {
 			const res = await axios.post("http://localhost:8080/api/auth/signin", 
