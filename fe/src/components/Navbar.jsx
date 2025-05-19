@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import { Link, useNavigate } from "react-router-dom"
 import { motion, AnimatePresence } from "framer-motion"
 import SearchCard from './SearchCard'
+import OptimizedImage from './OptimizedImage'
 
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
 import { BookmarkIcon, Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
@@ -81,7 +82,7 @@ const Navbar = () => {
                     <div className="flex flex-1 items-center justify-center sm:justify-start">
                         <div className="flex shrink-0 items-center">
                             <Link to="/">
-                                <img
+                                <OptimizedImage
                                     alt="Your Company"
                                     src="../assets/logo.png"
                                     className="h-16 w-auto"
@@ -149,7 +150,7 @@ const Navbar = () => {
                                         <MenuButton className="relative flex rounded-full bg-gray-800 text-sm focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 focus:outline-hidden cursor-pointer">
                                             <span className="absolute -inset-1.5" />
                                             <span className="sr-only">Open user menu</span>
-                                            <img
+                                            <OptimizedImage
                                                 alt=""
                                                 src={user.avatar || "../assets/avatar.png"}
                                                 className="size-8 rounded-full"
