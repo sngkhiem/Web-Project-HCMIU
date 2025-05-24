@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+import java.util.Arrays;
 
 @Configuration
 public class CorsConfig {
@@ -14,8 +15,11 @@ public class CorsConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         
-        // Allow your frontend origin
-        config.addAllowedOrigin("http://localhost:5173");
+        // Allow your frontend origins
+        config.setAllowedOrigins(Arrays.asList(
+            "http://localhost:5173",
+            "https://web-project-hcmiu.vercel.app"
+        ));
         
         // Allow credentials
         config.setAllowCredentials(true);
