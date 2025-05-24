@@ -16,10 +16,7 @@ public class CorsConfig {
         CorsConfiguration config = new CorsConfiguration();
         
         // Allow your frontend origins
-        config.setAllowedOrigins(Arrays.asList(
-            "http://localhost:5173",
-            "https://web-project-hcmiu.vercel.app"
-        ));
+        config.setAllowedOrigins(Collections.singletonList("*")));
         
         // Allow credentials
         config.setAllowCredentials(true);
