@@ -45,3 +45,4 @@ yarn-error.log*
 
 # Uploaded content
 uploaded-videos/ 
+.vercel
