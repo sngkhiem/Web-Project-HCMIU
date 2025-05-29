@@ -84,7 +84,9 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Collections.singletonList("*")
+        configuration.setAllowedOrigins(Arrays.asList(
+            "http://localhost:5173",
+            "https://web-project-hcmiu.vercel.app"
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(Arrays.asList(
@@ -94,7 +96,8 @@ public class SecurityConfig {
             "Accept",
             "Origin",
             "Access-Control-Request-Method",
-            "Access-Control-Request-Headers"
+            "Access-Control-Request-Headers",
+            "Access-Control-Allow-Origin"
         ));
         configuration.setAllowCredentials(true);
         configuration.setExposedHeaders(Arrays.asList("Set-Cookie", "Authorization"));
