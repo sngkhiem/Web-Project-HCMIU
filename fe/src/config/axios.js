@@ -2,7 +2,7 @@ import axios from "axios";
 import { useUserStore } from "../stores/useUserStore"
 
 const axiosInstance = axios.create({
-	baseURL: import.meta.env.VITE_API_URL || "http://localhost:8080/api",
+	baseURL: "http://localhost:8080/api",
 	withCredentials: true, // Always send cookies
 });
 
@@ -12,6 +12,8 @@ axiosInstance.interceptors.request.use(
 		if (token) {
 			config.headers["Authorization"] = `Bearer ${token}`;
 		}
+
+		config.headers["Access-Control-Allow-Origin"] = "https://web-project-hcmiu.vercel.app";
 		return config;
 	},
 	(error) => Promise.reject(error)
